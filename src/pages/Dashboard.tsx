@@ -6,6 +6,7 @@ import { useSession } from "@/integrations/supabase/session-context";
 import { Loader2, DollarSign, Wallet, TrendingDown, Percent } from "lucide-react";
 import { motion } from "framer-motion";
 import { useFinancialSummary } from "@/hooks/use-financial-summary";
+import SmartSuggestionBanner from "@/components/SmartSuggestionBanner";
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('en-US', {
@@ -52,6 +53,9 @@ const Dashboard = () => {
           Welcome back, {user.email?.split('@')[0]}!
         </h1>
         
+        {/* Smart Suggestion Banner */}
+        <SmartSuggestionBanner />
+
         {/* Summary Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <SummaryCard
