@@ -1,8 +1,13 @@
 import { useSession } from "@/integrations/supabase/session-context";
 import { Navigate } from "react-router-dom";
-import LandingContent from "@/components/LandingContent";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Loader2 } from "lucide-react";
+import HeroSection from "@/components/landing/HeroSection";
+import FeaturesSection from "@/components/landing/FeaturesSection";
+import ShowcaseSection from "@/components/landing/ShowcaseSection";
+import TestimonialsSection from "@/components/landing/TestimonialsSection";
+import CtaSection from "@/components/landing/CtaSection";
+import LandingFooter from "@/components/landing/LandingFooter";
 
 const Index = () => {
   const { isLoading, user } = useSession();
@@ -21,10 +26,14 @@ const Index = () => {
   }
 
   return (
-    <>
-      <LandingContent />
-      <MadeWithDyad />
-    </>
+    <div className="min-h-screen flex flex-col">
+      <HeroSection />
+      <FeaturesSection />
+      <ShowcaseSection />
+      <TestimonialsSection />
+      <CtaSection />
+      <LandingFooter />
+    </div>
   );
 };
 

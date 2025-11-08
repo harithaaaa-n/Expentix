@@ -99,3 +99,19 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom utility for animation delay */
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Custom utility for 3D perspective simulation */
+.perspective-1000 {
+  perspective: 1000px;
+}
+.transform-style-preserve-3d {
+  transform-style: preserve-3d;
+}
