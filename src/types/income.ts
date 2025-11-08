@@ -13,10 +13,14 @@ export const IncomeSchema = z.object({
   source: z.enum(IncomeSources),
   amount: z.number().min(0.01, "Amount must be greater than zero"),
   date: z.date(),
-  description: z.string().max(255).optional(),
+  description: z.string().max(255).optional().nullable(),
 });
 
-export type Income = z.infer<typeof IncomeSchema> & {
+export type IncomeFormValues = z.infer<typeof IncomeSchema>;
+
+// Type for data fetched directly from Supabase
+export type Income = Omit<IncomeFormValues, 'date'> & {
+  date: string; // Date string from DB
   user_id: string;
   created_at: string;
 };

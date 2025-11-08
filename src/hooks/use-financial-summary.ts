@@ -1,9 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/integrations/supabase/session-context";
-import { Income } from "@/types/income";
-import { Expense } from "@/types/expense";
-import { format } from "date-fns";
+import { format, subMonths, startOfMonth, endOfMonth } from "date-fns";
 
 interface MonthlyExpenseData {
   month: string;
@@ -15,55 +13,128 @@ interface CategoryExpenseData {
   value: number;
 }
 
-interface FinancialSummary {
+interface ComparisonData {
+  currentMonthExpenses: number;
+  lastMonthExpenses: number;
+  expenseDifference: number;
+  expenseChangePercent: number;
+}
+
+interface BudgetUsage {
+  category: string;
+  budgeted: number;
+  spent: number;
+  percentage: number;
+  status: 'ok' | 'warning' | 'danger';
+}
+
+export interface FinancialSummary {
   totalIncome: number;
   totalExpenses: number;
   remainingBalance: number;
   monthlyExpenses: MonthlyExpenseData[];
   categoryExpenses: CategoryExpenseData[];
+  comparison: ComparisonData;
+  budgetUsage: BudgetUsage[];
+  topCategories: CategoryExpenseData[];
+  recentTransactions: any[];
   isLoading: boolean;
 }
 
 const fetchFinancialData = async (userId: string) => {
-  const [incomeResult, expenseResult] = await Promise.all([
+  const currentMonthStart = format(startOfMonth(new Date()), 'yyyy-MM-dd');
+  
+  const [incomeResult, expenseResult, budgetResult] = await Promise.all([
     supabase.from('income').select('amount').eq('user_id', userId),
-    supabase.from('expenses').select('amount, expense_date, category').eq('user_id', userId),
+    supabase.from('expenses').select('*').eq('user_id', userId).order('expense_date', { ascending: false }),
+    supabase.from('budgets').select('category, amount').eq('user_id', userId).eq('month', currentMonthStart),
   ]);
 
   if (incomeResult.error) throw incomeResult.error;
   if (expenseResult.error) throw expenseResult.error;
+  if (budgetResult.error) throw budgetResult.error;
 
-  return { income: incomeResult.data, expenses: expenseResult.data };
+  return { income: incomeResult.data, expenses: expenseResult.data, budgets: budgetResult.data };
 };
 
-export const useFinancialSummary = (): FinancialSummary => {
+export const useFinancialSummary = (targetUserId?: string | null): FinancialSummary => {
   const { user, isLoading: isSessionLoading } = useSession();
+  const userId = targetUserId || user?.id;
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['financialSummary', user?.id],
-    queryFn: () => fetchFinancialData(user!.id),
-    enabled: !!user,
+    queryKey: ['financialSummary', userId],
+    queryFn: () => fetchFinancialData(userId!),
+    enabled: !!userId,
   });
 
   if (isError) {
     console.error("Failed to fetch financial data.");
   }
 
+  const allExpenses = data?.expenses || [];
   const totalIncome = data?.income?.reduce((sum, record) => sum + record.amount, 0) || 0;
-  const totalExpenses = data?.expenses?.reduce((sum, record) => sum + record.amount, 0) || 0;
+  const totalExpenses = allExpenses.reduce((sum, record) => sum + record.amount, 0) || 0;
   const remainingBalance = totalIncome - totalExpenses;
 
+  // --- Processing ---
+  const currentMonthStart = startOfMonth(new Date());
+  const lastMonthStart = startOfMonth(subMonths(new Date(), 1));
+  const lastMonthEnd = endOfMonth(subMonths(new Date(), 1));
+
+  let currentMonthExpensesTotal = 0;
+  let lastMonthExpensesTotal = 0;
   const monthlyMap = new Map<string, number>();
   const categoryMap = new Map<string, number>();
+  const categorySpentMap = new Map<string, number>();
 
-  data?.expenses?.forEach(expense => {
-    const monthKey = format(new Date(expense.expense_date), 'MMM yy');
+  allExpenses.forEach(expense => {
+    const expenseDate = new Date(expense.expense_date);
+    const monthKey = format(expenseDate, 'MMM yy');
+    
     monthlyMap.set(monthKey, (monthlyMap.get(monthKey) || 0) + expense.amount);
-    categoryMap.set(expense.category, (categoryMap.get(expense.category) || 0) + expense.amount);
+    
+    if (expenseDate >= currentMonthStart) {
+      categorySpentMap.set(expense.category, (categorySpentMap.get(expense.category) || 0) + expense.amount);
+      currentMonthExpensesTotal += expense.amount;
+    }
+    
+    if (expenseDate >= lastMonthStart && expenseDate <= lastMonthEnd) {
+      lastMonthExpensesTotal += expense.amount;
+    }
   });
 
+  // --- Comparison Calculation ---
+  const expenseDifference = currentMonthExpensesTotal - lastMonthExpensesTotal;
+  const expenseChangePercent = lastMonthExpensesTotal > 0 
+    ? (expenseDifference / lastMonthExpensesTotal) * 100 
+    : (currentMonthExpensesTotal > 0 ? 100 : 0);
+
+  const comparison: ComparisonData = {
+    currentMonthExpenses: currentMonthExpensesTotal,
+    lastMonthExpenses: lastMonthExpensesTotal,
+    expenseDifference,
+    expenseChangePercent,
+  };
+
+  // --- Budget Usage Calculation ---
+  const budgets = data?.budgets || [];
+  const budgetUsage: BudgetUsage[] = budgets.map(budget => {
+    const spent = categorySpentMap.get(budget.category) || 0;
+    const budgeted = budget.amount;
+    const percentage = budgeted > 0 ? Math.round((spent / budgeted) * 100) : (spent > 0 ? 1000 : 0);
+    
+    let status: 'ok' | 'warning' | 'danger' = 'ok';
+    if (percentage >= 100) status = 'danger';
+    else if (percentage >= 80) status = 'warning';
+
+    return { category: budget.category, budgeted, spent, percentage, status };
+  });
+
+  // --- Final Data Structures ---
   const monthlyExpenses = Array.from(monthlyMap.entries()).map(([month, expenses]) => ({ month, expenses }));
-  const categoryExpenses = Array.from(categoryMap.entries()).map(([name, value]) => ({ name, value }));
+  const categoryExpenses = Array.from(categorySpentMap.entries()).map(([name, value]) => ({ name, value }));
+  const topCategories = [...categoryExpenses].sort((a, b) => b.value - a.value);
+  const recentTransactions = allExpenses.slice(0, 5);
 
   return {
     totalIncome,
@@ -71,6 +142,10 @@ export const useFinancialSummary = (): FinancialSummary => {
     remainingBalance,
     monthlyExpenses,
     categoryExpenses,
+    comparison,
+    budgetUsage,
+    topCategories,
+    recentTransactions,
     isLoading: isLoading || isSessionLoading,
   };
 };
