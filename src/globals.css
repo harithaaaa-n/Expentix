@@ -96,6 +96,7 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    /* Set background to transparent/unset so the fixed gradient in LandingPage shows through */
+    @apply bg-transparent text-foreground; 
   }
 }

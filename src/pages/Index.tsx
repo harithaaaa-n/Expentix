@@ -1,8 +1,7 @@
 import { useSession } from "@/integrations/supabase/session-context";
 import { Navigate } from "react-router-dom";
-import LandingContent from "@/components/LandingContent";
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Loader2 } from "lucide-react";
+import LandingPage from "@/components/landing/LandingPage.tsx";
 
 const Index = () => {
   const { isLoading, user } = useSession();
@@ -21,10 +20,7 @@ const Index = () => {
   }
 
   return (
-    <>
-      <LandingContent />
-      <MadeWithDyad />
-    </>
+    <LandingPage />
   );
 };
 
