@@ -1,18 +1,30 @@
-// Update this page (the content is just a fallback if you fail to update the page)
-
+import { useSession } from "@/integrations/supabase/session-context";
+import { Navigate } from "react-router-dom";
+import LandingContent from "@/components/LandingContent";
 import { MadeWithDyad } from "@/components/made-with-dyad";
+import { Loader2 } from "lucide-react";
 
 const Index = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">
-          Start building your amazing project here!
-        </p>
+  const { isLoading, user } = useSession();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
+    );
+  }
+
+  if (user) {
+    // Redirect authenticated users to the dashboard
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return (
+    <>
+      <LandingContent />
       <MadeWithDyad />
-    </div>
+    </>
   );
 };
 

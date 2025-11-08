@@ -38,9 +38,6 @@ export const SessionContextProvider: React.FC<{ children: React.ReactNode }> = (
           setSession(currentSession);
           setUser(currentSession?.user ?? null);
           setIsLoading(false);
-        } else if (event === "AUTH_ERROR") {
-          showError("Authentication error occurred.");
-          setIsLoading(false);
         }
       },
     );
