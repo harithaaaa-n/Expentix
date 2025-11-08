@@ -137,7 +137,7 @@ const BudgetForm: React.FC<BudgetFormProps> = ({ initialData, onSubmit, isSubmit
           name="amount"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Budget Amount ($)</FormLabel>
+              <FormLabel>Budget Amount (₹)</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -179,7 +179,7 @@ const BudgetManager: React.FC = () => {
   const [editingBudget, setEditingBudget] = useState<BudgetFormValues | undefined>(undefined);
   const [selectedMonth, setSelectedMonth] = useState<Date>(startOfMonth(new Date()));
 
-  const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
 
   const fetchBudgets = async (month: Date) => {
     if (!user) return;

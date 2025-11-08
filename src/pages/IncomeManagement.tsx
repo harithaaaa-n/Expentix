@@ -23,7 +23,7 @@ interface IncomeTableProps {
   onDelete: (id: string) => void;
 }
 
-const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+const formatCurrency = (amount: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
 
 const IncomeTable: React.FC<IncomeTableProps> = ({ incomeRecords, onEdit, onDelete }) => {
   return (
