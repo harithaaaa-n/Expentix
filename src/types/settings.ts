@@ -6,6 +6,8 @@ export const FamilyMemberSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, "Name is required"),
   relation: z.string().optional(),
+  email: z.string().email("Invalid email address").optional().or(z.literal('')),
+  avatar_url: z.string().url("Invalid URL").optional().or(z.literal('')),
   share_id: z.string().optional(),
 });
 

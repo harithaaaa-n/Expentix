@@ -10,6 +10,10 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import ExpenseManagement from "./pages/ExpenseManagement";
 import IncomeManagement from "./pages/IncomeManagement";
+import Reports from "./pages/Reports";
+import Settings from "./pages/Settings";
+import FamilyPage from "./pages/Family";
+import SharedDashboard from "./pages/SharedDashboard";
 import { SessionContextProvider } from "./integrations/supabase/session-context";
 import { ThemeProvider } from "./components/ThemeProvider";
 
@@ -30,6 +34,10 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/expenses" element={<ExpenseManagement />} />
               <Route path="/income" element={<IncomeManagement />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/family" element={<FamilyPage />} />
+              <Route path="/share/:shareId" element={<SharedDashboard />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

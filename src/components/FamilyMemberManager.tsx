@@ -7,12 +7,12 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Loader2, Plus, User, Trash2, Edit, Share2, Copy } from 'lucide-react';
+import { Loader2, Plus, Trash2, Edit, Share2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/integrations/supabase/session-context';
 import { showError, showSuccess } from '@/utils/toast';
-import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 // --- Form Component ---
 interface FamilyMemberFormProps {
@@ -27,6 +27,8 @@ const MemberForm: React.FC<FamilyMemberFormProps> = ({ initialData, onSubmit, is
     defaultValues: initialData || {
       name: '',
       relation: '',
+      email: '',
+      avatar_url: '',
     },
   });
 
@@ -60,6 +62,32 @@ const MemberForm: React.FC<FamilyMemberFormProps> = ({ initialData, onSubmit, is
               <FormLabel>Relation (Optional)</FormLabel>
               <FormControl>
                 <Input placeholder="e.g., Spouse, Child" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email (Optional)</FormLabel>
+              <FormControl>
+                <Input type="email" placeholder="e.g., jane@example.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="avatar_url"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Avatar URL (Optional)</FormLabel>
+              <FormControl>
+                <Input placeholder="https://..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -118,28 +146,16 @@ const FamilyMemberManager: React.FC = () => {
     const memberData = {
       ...data,
       user_id: user.id,
-      // Ensure share_id is generated only if it's a new member or missing
       share_id: editingMember?.share_id || Math.random().toString(36).substring(2, 10).toUpperCase(), 
     };
 
     try {
       if (editingMember?.id) {
-        // Update existing member
-        const { error } = await supabase
-          .from('family_members')
-          .update(memberData)
-          .eq('id', editingMember.id)
-          .select();
-
+        const { error } = await supabase.from('family_members').update(memberData).eq('id', editingMember.id);
         if (error) throw error;
         showSuccess('Family member updated successfully!');
       } else {
-        // Add new member
-        const { error } = await supabase
-          .from('family_members')
-          .insert(memberData)
-          .select();
-
+        const { error } = await supabase.from('family_members').insert(memberData);
         if (error) throw error;
         showSuccess('Family member added successfully!');
       }
@@ -158,11 +174,7 @@ const FamilyMemberManager: React.FC = () => {
     if (!window.confirm('Are you sure you want to delete this family member?')) return;
 
     try {
-      const { error } = await supabase
-        .from('family_members')
-        .delete()
-        .eq('id', id);
-
+      const { error } = await supabase.from('family_members').delete().eq('id', id);
       if (error) throw error;
       showSuccess('Family member deleted successfully!');
       setMembers(prev => prev.filter(m => m.id !== id));
@@ -186,6 +198,8 @@ const FamilyMemberManager: React.FC = () => {
     navigator.clipboard.writeText(shareLink);
     showSuccess("Share link copied to clipboard!");
   };
+
+  const getInitials = (name: string) => name.split(' ').map(n => n[0]).join('').toUpperCase();
 
   if (isLoading) {
     return (
@@ -219,13 +233,16 @@ const FamilyMemberManager: React.FC = () => {
       </CardHeader>
       <CardContent className="pt-4">
         {members.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No family members added yet. Add members to generate a share link for them to view your finances.</p>
+          <p className="text-sm text-muted-foreground">No family members added yet. Add members to share your financial overview.</p>
         ) : (
           <div className="space-y-3">
             {members.map((member) => (
               <div key={member.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-md border">
                 <div className="flex items-center space-x-3">
-                  <User className="h-5 w-5 text-primary" />
+                  <Avatar>
+                    <AvatarImage src={member.avatar_url || ''} alt={member.name} />
+                    <AvatarFallback>{getInitials(member.name)}</AvatarFallback>
+                  </Avatar>
                   <div>
                     <p className="font-medium">{member.name}</p>
                     <p className="text-xs text-muted-foreground">{member.relation || 'N/A'}</p>
