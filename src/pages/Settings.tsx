@@ -1,7 +1,9 @@
 import DashboardLayout from "@/components/DashboardLayout";
 import ProfileForm from "@/components/ProfileForm";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import FamilyMemberManager from "@/components/FamilyMemberManager";
+import BudgetManager from "@/components/BudgetManager";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Settings = () => {
   // totalBalance is required by DashboardLayout, but we don't need real data here.
@@ -12,6 +14,7 @@ const Settings = () => {
       <div className="space-y-6">
         <h1 className="text-3xl font-bold">Settings</h1>
         
+        {/* Profile Information */}
         <Card>
           <CardHeader>
             <CardTitle>Profile Information</CardTitle>
@@ -24,6 +27,29 @@ const Settings = () => {
           </CardContent>
         </Card>
 
+        {/* Monthly Budget Setup */}
+        <BudgetManager />
+
+        {/* Family Member Management */}
+        <FamilyMemberManager />
+
+        {/* Theme Toggle */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Appearance</CardTitle>
+            <CardDescription>
+              Toggle between light and dark themes.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium">Current Theme</p>
+              <ThemeToggle />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Account Management Placeholder */}
         <Card>
           <CardHeader>
             <CardTitle>Account Management</CardTitle>
@@ -32,7 +58,6 @@ const Settings = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {/* Placeholder for future account settings */}
             <p className="text-sm text-muted-foreground">
               More account settings coming soon.
             </p>
