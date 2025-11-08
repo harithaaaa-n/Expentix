@@ -1,7 +1,6 @@
 import DashboardLayout from "@/components/DashboardLayout";
 import ProfileForm from "@/components/ProfileForm";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import FamilyMemberManager from "@/components/FamilyMemberManager";
 import BudgetManager from "@/components/BudgetManager";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -26,9 +25,6 @@ const Settings = () => {
 
         {/* Monthly Budget Setup */}
         <BudgetManager />
-
-        {/* Family Member Management */}
-        <FamilyMemberManager />
 
         {/* Theme Toggle */}
         <Card>

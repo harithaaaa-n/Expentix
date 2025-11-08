@@ -1,5 +1,5 @@
 import DashboardLayout from "@/components/DashboardLayout";
-import FamilyMemberManager from "@/components/FamilyMemberManager";
+import FamilyMemberList, { MemberForm } from "@/components/FamilyMemberManager";
 import FamilyMemberCard from "@/components/FamilyMemberCard";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Trophy, Activity, Plus, DollarSign, LayoutDashboard, Loader2 } from "lucide-react";
@@ -7,15 +7,18 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useSession } from "@/integrations/supabase/session-context";
 import { supabase } from "@/integrations/supabase/client";
-import { FamilyMember } from "@/types/settings";
+import { FamilyMember, FamilyMemberFormValues } from "@/types/settings";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { showError } from "@/utils/toast";
+import { showError, showSuccess } from "@/utils/toast";
 
 const FamilyPage = () => {
   const { user } = useSession();
   const [members, setMembers] = useState<FamilyMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingMember, setEditingMember] = useState<FamilyMemberFormValues | undefined>(undefined);
 
   const fetchMembers = async () => {
     if (!user) return;
@@ -40,6 +43,60 @@ const FamilyPage = () => {
     }
   }, [user]);
 
+  const handleFormSubmit = async (data: FamilyMemberFormValues) => {
+    if (!user) return;
+    setIsSubmitting(true);
+
+    const memberData = {
+      ...data,
+      user_id: user.id,
+      share_id: editingMember?.share_id || Math.random().toString(36).substring(2, 10).toUpperCase(), 
+    };
+
+    try {
+      if (editingMember?.id) {
+        const { error } = await supabase.from('family_members').update(memberData).eq('id', editingMember.id);
+        if (error) throw error;
+        showSuccess('Family member updated successfully!');
+      } else {
+        const { error } = await supabase.from('family_members').insert(memberData);
+        if (error) throw error;
+        showSuccess('Family member added successfully!');
+      }
+      
+      await fetchMembers();
+      setIsModalOpen(false);
+      setEditingMember(undefined);
+    } catch (error: any) {
+      showError('Operation failed: ' + error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this family member?')) return;
+
+    try {
+      const { error } = await supabase.from('family_members').delete().eq('id', id);
+      if (error) throw error;
+      showSuccess('Family member deleted successfully!');
+      setMembers(prev => prev.filter(m => m.id !== id));
+    } catch (error: any) {
+      showError('Deletion failed: ' + error.message);
+    }
+  };
+
+  const handleEdit = (member: FamilyMember) => {
+    setEditingMember(member);
+    setIsModalOpen(true);
+  };
+
+  const handleAdd = () => {
+    setEditingMember(undefined);
+    setIsModalOpen(true);
+  };
+
   if (isLoading) {
     return (
       <DashboardLayout>
@@ -60,17 +117,39 @@ const FamilyPage = () => {
             <p className="text-muted-foreground">Track, share, and grow together as a family 💫</p>
           </div>
           <div className="flex space-x-3 self-start md:self-center">
+            
+            {/* Add Member Button (Functional) */}
+            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" onClick={handleAdd}>
+                  <Plus className="mr-2 h-4 w-4" /> Add Member
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>{editingMember ? 'Edit Member' : 'Add New Member'}</DialogTitle>
+                </DialogHeader>
+                <MemberForm 
+                  initialData={editingMember} 
+                  onSubmit={handleFormSubmit} 
+                  isSubmitting={isSubmitting}
+                />
+              </DialogContent>
+            </Dialog>
+
+            {/* Add Transaction Button (Functional) */}
             <Link to="/expenses">
               <Button variant="outline">
                 <DollarSign className="mr-2 h-4 w-4" /> Add Transaction
               </Button>
             </Link>
+            
+            {/* View Family Summary Button (Functional - links to Dashboard) */}
             <Link to="/dashboard">
               <Button variant="outline">
                 <LayoutDashboard className="mr-2 h-4 w-4" /> View Family Summary
               </Button>
             </Link>
-            {/* Add Member button is now inside FamilyMemberManager, but we can keep a trigger here if needed */}
           </div>
         </div>
         
@@ -85,7 +164,7 @@ const FamilyPage = () => {
           <CardContent>
             {members.length === 0 ? (
               <div className="text-center p-4 text-muted-foreground border rounded-lg">
-                No family members added yet. Use the manager below to add members.
+                No family members added yet. Use the 'Add Member' button above to get started.
               </div>
             ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -97,8 +176,13 @@ const FamilyPage = () => {
           </CardContent>
         </Card>
 
-        {/* Family Member Management (Moved to bottom for cleaner layout) */}
-        <FamilyMemberManager />
+        {/* Family Member Management List */}
+        <FamilyMemberList 
+          members={members} 
+          isLoading={isLoading} 
+          onEdit={handleEdit} 
+          onDelete={handleDelete} 
+        />
 
         {/* Placeholder for Leaderboard */}
         <Card>
