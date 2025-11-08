@@ -7,6 +7,7 @@ import { Loader2, DollarSign, Wallet, TrendingDown, Percent } from "lucide-react
 import { motion } from "framer-motion";
 import { useFinancialSummary } from "@/hooks/use-financial-summary";
 import SmartSuggestionBanner from "@/components/SmartSuggestionBanner";
+import DailyReminderBanner from "@/components/DailyReminderBanner";
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('en-US', {
@@ -55,6 +56,9 @@ const Dashboard = () => {
         
         {/* Smart Suggestion Banner */}
         <SmartSuggestionBanner />
+
+        {/* Daily Reminder Banner */}
+        <DailyReminderBanner />
 
         {/* Summary Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
