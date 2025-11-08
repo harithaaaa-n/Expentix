@@ -14,6 +14,7 @@ import ExpenseManagement from "./pages/ExpenseManagement";
 import IncomeManagement from "./pages/IncomeManagement";
 import Settings from "./pages/Settings";
 import Reports from "./pages/Reports";
+import SharedDashboard from "./pages/SharedDashboard";
 import { SessionContextProvider } from "./integrations/supabase/session-context";
 import { ThemeProvider } from "./components/ThemeProvider";
 import React from "react";
@@ -65,6 +66,7 @@ const App = () => (
               <Route path="/income" element={<IncomeManagement />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/reports" element={<Reports />} />
+              <Route path="/share/:shareId" element={<SharedDashboard />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

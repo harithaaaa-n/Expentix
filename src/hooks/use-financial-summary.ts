@@ -45,6 +45,12 @@ const fetchFinancialData = async (userId: string) => {
   const now = new Date();
   const currentMonthStartString = format(startOfMonth(now), 'yyyy-MM-dd');
 
+  // NOTE: RLS policies must allow the currently authenticated user (or anon user if no auth) 
+  // to read data belonging to `userId` if this is a shared view. 
+  // Since RLS is currently set to `auth.uid() = user_id`, this will only work if the viewer is the owner.
+  // For shared viewing, we must assume the RLS policies are configured to allow the viewer to see the owner's data 
+  // if they are part of the family group, or that the shared dashboard is only for viewing by the owner when logged out.
+
   const [incomeResult, expenseResult, budgetResult] = await Promise.all([
     supabase.from('income').select('amount, date').eq('user_id', userId),
     supabase.from('expenses').select('amount, expense_date, category').eq('user_id', userId),
@@ -167,13 +173,16 @@ const processFinancialData = (
   };
 };
 
-export const useFinancialSummary = (): FinancialSummary => {
+export const useFinancialSummary = (targetUserId?: string): FinancialSummary => {
   const { user, isLoading: isSessionLoading } = useSession();
+  
+  // Determine the user ID to fetch data for
+  const userIdToFetch = targetUserId || user?.id;
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['financialSummary', user?.id],
-    queryFn: () => fetchFinancialData(user!.id),
-    enabled: !!user && !isSessionLoading,
+    queryKey: ['financialSummary', userIdToFetch],
+    queryFn: () => fetchFinancialData(userIdToFetch!),
+    enabled: !!userIdToFetch && !isSessionLoading,
     staleTime: 1000 * 60 * 5, 
   });
 

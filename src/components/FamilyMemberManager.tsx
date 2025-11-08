@@ -7,11 +7,12 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Loader2, Plus, User, Trash2, Edit, Share2 } from 'lucide-react';
+import { Loader2, Plus, User, Trash2, Edit, Share2, Copy } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/integrations/supabase/session-context';
 import { showError, showSuccess } from '@/utils/toast';
 import { Separator } from '@/components/ui/separator';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 // --- Form Component ---
 interface FamilyMemberFormProps {
@@ -117,7 +118,8 @@ const FamilyMemberManager: React.FC = () => {
     const memberData = {
       ...data,
       user_id: user.id,
-      share_id: data.share_id || Math.random().toString(36).substring(2, 10).toUpperCase(), // Generate simple share ID if new
+      // Ensure share_id is generated only if it's a new member or missing
+      share_id: editingMember?.share_id || Math.random().toString(36).substring(2, 10).toUpperCase(), 
     };
 
     try {
@@ -178,6 +180,12 @@ const FamilyMemberManager: React.FC = () => {
     setEditingMember(undefined);
     setIsModalOpen(true);
   };
+  
+  const handleCopyLink = (shareId: string) => {
+    const shareLink = `${window.location.origin}/share/${shareId}`;
+    navigator.clipboard.writeText(shareLink);
+    showSuccess("Share link copied to clipboard!");
+  };
 
   if (isLoading) {
     return (
@@ -211,7 +219,7 @@ const FamilyMemberManager: React.FC = () => {
       </CardHeader>
       <CardContent className="pt-4">
         {members.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No family members added yet.</p>
+          <p className="text-sm text-muted-foreground">No family members added yet. Add members to generate a share link for them to view your finances.</p>
         ) : (
           <div className="space-y-3">
             {members.map((member) => (
@@ -224,9 +232,21 @@ const FamilyMemberManager: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-xs text-muted-foreground flex items-center">
-                    <Share2 className="h-3 w-3 mr-1" /> ID: {member.share_id}
-                  </span>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => handleCopyLink(member.share_id!)}
+                        className="text-xs h-8 px-3"
+                      >
+                        <Share2 className="h-3 w-3 mr-1" /> Share Link
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Copy Read-Only Share Link</p>
+                    </TooltipContent>
+                  </Tooltip>
                   <Button variant="ghost" size="icon" onClick={() => handleEdit(member)}>
                     <Edit className="h-4 w-4" />
                   </Button>

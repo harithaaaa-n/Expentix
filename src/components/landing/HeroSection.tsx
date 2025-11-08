@@ -1,12 +1,12 @@
 import React from 'react';
-import { motion, type Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Wallet } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import LottieAnimation from '@/components/LottieAnimation';
 import floatingCoinData from '/public/lottie/floating-coin.json';
 
-const containerVariants: Variants = {
+const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -16,9 +16,9 @@ const containerVariants: Variants = {
   },
 };
 
-const itemVariants: Variants = {
+const itemVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeInOut" } }, // Fixed: using predefined string easing
 };
 
 const HeroSection: React.FC = () => {
