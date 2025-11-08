@@ -12,6 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { CalendarIcon, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import ReceiptUploader from './ReceiptUploader';
 
 interface ExpenseFormProps {
   initialData?: ExpenseFormValues;
@@ -29,28 +30,32 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit, isSubm
       expense_date: new Date(),
       payment_type: PaymentTypes[0],
       description: '',
+      receipt_url: null,
     },
   });
 
+  const { setValue, watch } = form;
+  const receiptUrl = watch('receipt_url');
+
   React.useEffect(() => {
     if (initialData) {
-      // Reset form with initial data when editing
       form.reset({
         ...initialData,
-        // Ensure amount is treated as a number for the form
         amount: parseFloat(String(initialData.amount)),
-        // Ensure date is a Date object
         expense_date: new Date(initialData.expense_date),
       });
     }
   }, [initialData, form.reset]);
 
 
+  const handleReceiptUpload = (url: string) => {
+    setValue('receipt_url', url, { shouldValidate: true });
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Title */}
           <FormField
             control={form.control}
             name="title"
@@ -65,13 +70,12 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit, isSubm
             )}
           />
 
-          {/* Amount */}
           <FormField
             control={form.control}
             name="amount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Amount ($)</FormLabel>
+                <FormLabel>Amount (₹)</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -86,7 +90,6 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit, isSubm
             )}
           />
 
-          {/* Category */}
           <FormField
             control={form.control}
             name="category"
@@ -112,7 +115,6 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit, isSubm
             )}
           />
 
-          {/* Date */}
           <FormField
             control={form.control}
             name="expense_date"
@@ -155,14 +157,13 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit, isSubm
             )}
           />
 
-          {/* Payment Type */}
           <FormField
             control={form.control}
             name="payment_type"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Payment Type</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} defaultValue={field.value || undefined}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select payment type" />
@@ -182,7 +183,6 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit, isSubm
           />
         </div>
 
-        {/* Description */}
         <FormField
           control={form.control}
           name="description"
@@ -190,11 +190,17 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit, isSubm
             <FormItem>
               <FormLabel>Description (Optional)</FormLabel>
               <FormControl>
-                <Textarea placeholder="Details about the expense..." {...field} />
+                <Textarea placeholder="Details about the expense..." {...field} value={field.value ?? ''} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
+        />
+
+        <ReceiptUploader 
+          onUploadSuccess={handleReceiptUpload} 
+          initialUrl={receiptUrl}
+          disabled={isSubmitting}
         />
 
         <Button type="submit" className="w-full" disabled={isSubmitting}>

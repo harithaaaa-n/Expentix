@@ -21,10 +21,8 @@ const formatCurrency = (amount: number) => {
 const SharedDashboard: React.FC = () => {
   const { shareId } = useParams<{ shareId: string }>();
   
-  // 1. Resolve Share ID to Owner User ID
   const { data: ownerUserId, isLoading: isResolving, isError: isResolveError } = useShareResolver(shareId || null);
 
-  // 2. Fetch Financial Data for Owner
   const { 
     totalIncome, 
     totalExpenses, 
@@ -32,7 +30,7 @@ const SharedDashboard: React.FC = () => {
     monthlyExpenses, 
     categoryExpenses, 
     isLoading: isFinancialLoading 
-  } = useFinancialSummary(ownerUserId || undefined);
+  } = useFinancialSummary(ownerUserId);
 
   const isLoading = isResolving || isFinancialLoading;
   const budgetUsedPercentage = totalIncome > 0 ? Math.round((totalExpenses / totalIncome) * 100) : 0;
@@ -92,7 +90,6 @@ const SharedDashboard: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Summary Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <SummaryCard
             title="Total Income 💰"
@@ -124,7 +121,6 @@ const SharedDashboard: React.FC = () => {
           />
         </div>
 
-        {/* Charts */}
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <MonthlyExpenseChart data={monthlyExpenses} />

@@ -1,10 +1,9 @@
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/integrations/supabase/session-context";
-import { Income } from "@/types/income";
 import { Expense } from "@/types/expense";
-import { Budget } from "@/types/settings";
-import { format, startOfMonth, subMonths, isSameMonth } from "date-fns";
+import { format, subMonths, startOfMonth, endOfMonth } from "date-fns";
 
 interface MonthlyExpenseData {
   month: string;
@@ -23,11 +22,11 @@ interface ComparisonData {
   expenseChangePercent: number;
 }
 
-interface BudgetUsageData {
+interface BudgetUsage {
   category: string;
-  percentage: number;
-  spent: number;
   budgeted: number;
+  spent: number;
+  percentage: number;
   status: 'ok' | 'warning' | 'danger';
 }
 
@@ -37,20 +36,20 @@ interface FinancialSummary {
   remainingBalance: number;
   monthlyExpenses: MonthlyExpenseData[];
   categoryExpenses: CategoryExpenseData[];
-  recentExpenses: Expense[];
   comparison: ComparisonData;
-  budgetUsage: BudgetUsageData[];
+  budgetUsage: BudgetUsage[];
   topCategories: CategoryExpenseData[];
+  recentExpenses: Expense[];
   isLoading: boolean;
 }
 
 const fetchFinancialData = async (userId: string) => {
   const currentMonthStart = format(startOfMonth(new Date()), 'yyyy-MM-dd');
-
+  
   const [incomeResult, expenseResult, budgetResult] = await Promise.all([
-    supabase.from('income').select('*').eq('user_id', userId),
+    supabase.from('income').select('amount').eq('user_id', userId),
     supabase.from('expenses').select('*').eq('user_id', userId).order('expense_date', { ascending: false }),
-    supabase.from('budgets').select('*').eq('user_id', userId).eq('month', currentMonthStart),
+    supabase.from('budgets').select('category, amount').eq('user_id', userId).eq('month', currentMonthStart),
   ]);
 
   if (incomeResult.error) throw incomeResult.error;
@@ -58,90 +57,117 @@ const fetchFinancialData = async (userId: string) => {
   if (budgetResult.error) throw budgetResult.error;
 
   return { 
-    income: incomeResult.data as Income[], 
-    expenses: expenseResult.data as Expense[], 
-    budgets: budgetResult.data as Budget[] 
+    income: incomeResult.data as { amount: number }[],
+    expenses: expenseResult.data as Expense[],
+    budgets: budgetResult.data as { category: string, amount: number }[]
   };
 };
 
-export const useFinancialSummary = (targetUserId?: string | null): FinancialSummary => {
+const useFinancialSummary = (targetUserId?: string | null): FinancialSummary => {
   const { user, isLoading: isSessionLoading } = useSession();
-  const userIdToFetch = targetUserId || user?.id;
+  const userId = targetUserId || user?.id;
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['financialSummary', userIdToFetch],
-    queryFn: () => fetchFinancialData(userIdToFetch!),
-    enabled: !!userIdToFetch,
+    queryKey: ['financialSummary', userId],
+    queryFn: () => fetchFinancialData(userId!),
+    enabled: !!userId,
   });
 
   if (isError) {
     console.error("Failed to fetch financial data.");
   }
 
-  const expensesData = data?.expenses || [];
-  const incomeData = data?.income || [];
-  const budgetsData = data?.budgets || [];
+  const summary = React.useMemo(() => {
+    const emptyState: Omit<FinancialSummary, 'isLoading'> = {
+      totalIncome: 0,
+      totalExpenses: 0,
+      remainingBalance: 0,
+      monthlyExpenses: [],
+      categoryExpenses: [],
+      comparison: { currentMonthExpenses: 0, lastMonthExpenses: 0, expenseDifference: 0, expenseChangePercent: 0 },
+      budgetUsage: [],
+      topCategories: [],
+      recentExpenses: [],
+    };
 
-  // --- Basic Calculations ---
-  const totalIncome = incomeData.reduce((sum, record) => sum + Number(record.amount), 0);
-  const totalExpenses = expensesData.reduce((sum, record) => sum + Number(record.amount), 0);
-  const remainingBalance = totalIncome - totalExpenses;
-  const recentExpenses = expensesData.slice(0, 5);
+    if (!data) return emptyState;
 
-  // --- Monthly & Category Aggregations ---
-  const monthlyMap = new Map<string, number>();
-  const categoryMap = new Map<string, number>();
-  expensesData.forEach(expense => {
-    const expenseDate = new Date(expense.expense_date);
-    const monthKey = format(expenseDate, 'MMM yy');
-    monthlyMap.set(monthKey, (monthlyMap.get(monthKey) || 0) + Number(expense.amount));
-    categoryMap.set(expense.category, (categoryMap.get(expense.category) || 0) + Number(expense.amount));
-  });
-  const monthlyExpenses = Array.from(monthlyMap.entries()).map(([month, expenses]) => ({ month, expenses }));
-  const categoryExpenses = Array.from(categoryMap.entries()).map(([name, value]) => ({ name, value }));
-  const topCategories = [...categoryExpenses].sort((a, b) => b.value - a.value);
+    const { income, expenses, budgets } = data;
 
-  // --- Comparison Calculation ---
-  const now = new Date();
-  const lastMonth = subMonths(now, 1);
-  const currentMonthExpenses = expensesData
-    .filter(e => isSameMonth(new Date(e.expense_date), now))
-    .reduce((sum, e) => sum + Number(e.amount), 0);
-  const lastMonthExpenses = expensesData
-    .filter(e => isSameMonth(new Date(e.expense_date), lastMonth))
-    .reduce((sum, e) => sum + Number(e.amount), 0);
-  const expenseDifference = currentMonthExpenses - lastMonthExpenses;
-  const expenseChangePercent = lastMonthExpenses > 0 ? (expenseDifference / lastMonthExpenses) * 100 : (currentMonthExpenses > 0 ? 100 : 0);
-  const comparison: ComparisonData = { currentMonthExpenses, lastMonthExpenses, expenseDifference, expenseChangePercent };
+    const totalIncome = income.reduce((sum, record) => sum + record.amount, 0);
+    const totalExpenses = expenses.reduce((sum, record) => sum + record.amount, 0);
+    const remainingBalance = totalIncome - totalExpenses;
 
-  // --- Budget Usage Calculation ---
-  const currentMonthCategoryExpenses = new Map<string, number>();
-  expensesData
-    .filter(e => isSameMonth(new Date(e.expense_date), now))
-    .forEach(e => {
-      currentMonthCategoryExpenses.set(e.category, (currentMonthCategoryExpenses.get(e.category) || 0) + Number(e.amount));
+    const monthlyMap = new Map<string, number>();
+    const categoryMap = new Map<string, number>();
+    const categorySpentThisMonthMap = new Map<string, number>();
+
+    const now = new Date();
+    const currentMonthStart = startOfMonth(now);
+    const lastMonthStart = startOfMonth(subMonths(now, 1));
+    const lastMonthEnd = endOfMonth(subMonths(now, 1));
+
+    let currentMonthExpensesTotal = 0;
+    let lastMonthExpensesTotal = 0;
+
+    expenses.forEach(expense => {
+      const expenseDate = new Date(expense.expense_date);
+      const monthKey = format(expenseDate, 'MMM yy');
+      
+      monthlyMap.set(monthKey, (monthlyMap.get(monthKey) || 0) + expense.amount);
+      categoryMap.set(expense.category, (categoryMap.get(expense.category) || 0) + expense.amount);
+
+      if (expenseDate >= currentMonthStart) {
+        currentMonthExpensesTotal += expense.amount;
+        categorySpentThisMonthMap.set(expense.category, (categorySpentThisMonthMap.get(expense.category) || 0) + expense.amount);
+      } else if (expenseDate >= lastMonthStart && expenseDate <= lastMonthEnd) {
+        lastMonthExpensesTotal += expense.amount;
+      }
     });
 
-  const budgetUsage: BudgetUsageData[] = budgetsData.map(budget => {
-    const spent = currentMonthCategoryExpenses.get(budget.category) || 0;
-    const budgeted = Number(budget.amount);
-    const percentage = budgeted > 0 ? (spent / budgeted) * 100 : 0;
-    let status: 'ok' | 'warning' | 'danger' = 'ok';
-    if (percentage > 100) status = 'danger';
-    else if (percentage >= 80) status = 'warning';
-    return { category: budget.category, percentage, spent, budgeted, status };
-  });
+    const expenseDifference = currentMonthExpensesTotal - lastMonthExpensesTotal;
+    const expenseChangePercent = lastMonthExpensesTotal > 0 
+      ? (expenseDifference / lastMonthExpensesTotal) * 100 
+      : (currentMonthExpensesTotal > 0 ? 100 : 0);
 
-  return {
-    totalIncome,
-    totalExpenses,
-    remainingBalance,
-    monthlyExpenses,
-    categoryExpenses,
-    recentExpenses,
-    comparison,
-    budgetUsage,
-    topCategories,
-    isLoading: isLoading || isSessionLoading,
-  };
+    const comparison: ComparisonData = {
+      currentMonthExpenses: currentMonthExpensesTotal,
+      lastMonthExpenses: lastMonthExpensesTotal,
+      expenseDifference,
+      expenseChangePercent,
+    };
+
+    const budgetUsage: BudgetUsage[] = budgets.map(budget => {
+      const spent = categorySpentThisMonthMap.get(budget.category) || 0;
+      const budgeted = budget.amount;
+      const percentage = budgeted > 0 ? (spent / budgeted) * 100 : (spent > 0 ? 1000 : 0);
+      
+      let status: 'ok' | 'warning' | 'danger' = 'ok';
+      if (percentage >= 100) status = 'danger';
+      else if (percentage >= 80) status = 'warning';
+
+      return { category: budget.category, budgeted, spent, percentage, status };
+    });
+
+    const categoryExpenses = Array.from(categoryMap.entries()).map(([name, value]) => ({ name, value }));
+    const topCategories = [...categoryExpenses].sort((a, b) => b.value - a.value);
+    const monthlyExpenses = Array.from(monthlyMap.entries()).map(([month, expenses]) => ({ month, expenses }));
+    const recentExpenses = expenses.slice(0, 5);
+
+    return {
+      totalIncome,
+      totalExpenses,
+      remainingBalance,
+      monthlyExpenses,
+      categoryExpenses,
+      comparison,
+      budgetUsage,
+      topCategories,
+      recentExpenses,
+    };
+  }, [data]);
+
+  return { ...summary, isLoading: isLoading || isSessionLoading };
 };
+
+export { useFinancialSummary };

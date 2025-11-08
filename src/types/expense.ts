@@ -32,8 +32,9 @@ export const ExpenseSchema = z.object({
 
 export type ExpenseFormValues = z.infer<typeof ExpenseSchema>;
 
-export type Expense = Omit<ExpenseFormValues, 'expense_date'> & {
+export type Expense = Omit<ExpenseFormValues, 'expense_date' | 'amount'> & {
   expense_date: string; // Date string from DB
+  amount: number; // Amount is numeric from DB
   user_id: string;
   created_at: string;
 };
