@@ -9,9 +9,9 @@ import { motion } from "framer-motion";
 import { useFinancialSummary } from "@/hooks/use-financial-summary";
 
 const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-IN', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'INR',
   }).format(amount);
 };
 

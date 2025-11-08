@@ -76,7 +76,7 @@ const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSubmit, isSubmit
             name="amount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Amount ($)</FormLabel>
+                <FormLabel>Amount (₹)</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
