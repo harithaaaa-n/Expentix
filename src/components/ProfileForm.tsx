@@ -5,16 +5,19 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/integrations/supabase/session-context';
 import { showError, showSuccess } from '@/utils/toast';
+import { useTheme } from 'next-themes';
 
 // Define the schema for the profile form
 const ProfileSchema = z.object({
   first_name: z.string().max(50).optional(),
   last_name: z.string().max(50).optional(),
   avatar_url: z.string().url().optional().or(z.literal('')),
+  theme: z.enum(['light', 'dark', 'system']).optional(), // Include theme
 });
 
 type ProfileFormValues = z.infer<typeof ProfileSchema>;
@@ -24,10 +27,12 @@ interface Profile {
   first_name: string | null;
   last_name: string | null;
   avatar_url: string | null;
+  theme: 'light' | 'dark' | 'system' | null;
 }
 
 const ProfileForm: React.FC = () => {
   const { user, isLoading: isSessionLoading } = useSession();
+  const { theme, setTheme } = useTheme();
   const [initialProfile, setInitialProfile] = useState<ProfileFormValues | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,6 +43,7 @@ const ProfileForm: React.FC = () => {
       first_name: '',
       last_name: '',
       avatar_url: '',
+      theme: 'light',
     },
   });
 
@@ -47,7 +53,7 @@ const ProfileForm: React.FC = () => {
     
     const { data, error } = await supabase
       .from('profiles')
-      .select('first_name, last_name, avatar_url')
+      .select('first_name, last_name, avatar_url, theme')
       .eq('id', user.id)
       .single();
 
@@ -58,9 +64,15 @@ const ProfileForm: React.FC = () => {
         first_name: data.first_name || '',
         last_name: data.last_name || '',
         avatar_url: data.avatar_url || '',
+        theme: (data.theme as 'light' | 'dark' | 'system') || 'light',
       };
       setInitialProfile(profileData);
       form.reset(profileData);
+      
+      // Apply theme preference on load
+      if (profileData.theme && profileData.theme !== theme) {
+        setTheme(profileData.theme);
+      }
     }
     setIsLoading(false);
   };
@@ -83,16 +95,19 @@ const ProfileForm: React.FC = () => {
           first_name: data.first_name || null,
           last_name: data.last_name || null,
           avatar_url: data.avatar_url || null,
+          theme: data.theme || 'light',
           updated_at: new Date().toISOString(),
         }, { onConflict: 'id' })
         .select();
 
       if (error) throw error;
 
-      // Optionally update auth.users metadata if needed, but we rely on profiles table
+      // Update the theme immediately if it changed
+      if (data.theme && data.theme !== theme) {
+        setTheme(data.theme);
+      }
       
       showSuccess('Profile updated successfully!');
-      // Re-fetch to update the initial state and trigger dashboard/header refresh if needed
       fetchProfile(); 
     } catch (error: any) {
       showError('Failed to update profile: ' + error.message);
@@ -154,6 +169,30 @@ const ProfileForm: React.FC = () => {
               <FormControl>
                 <Input placeholder="https://example.com/avatar.jpg" {...field} />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Theme Preference */}
+        <FormField
+          control={form.control}
+          name="theme"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Theme Preference</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select theme" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="light">Light</SelectItem>
+                  <SelectItem value="dark">Dark</SelectItem>
+                  <SelectItem value="system">System</SelectItem>
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}

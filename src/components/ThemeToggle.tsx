@@ -1,12 +1,31 @@
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useSession } from "@/integrations/supabase/session-context";
+import { showError } from "@/utils/toast";
 
 export function ThemeToggle() {
   const { setTheme, theme } = useTheme();
+  const { user } = useSession();
+
+  const saveThemePreference = async (newTheme: string) => {
+    if (!user) return;
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ theme: newTheme, updated_at: new Date().toISOString() })
+      .eq('id', user.id);
+
+    if (error) {
+      showError("Failed to save theme preference: " + error.message);
+    }
+  };
 
   const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    saveThemePreference(newTheme);
   };
 
   return (
