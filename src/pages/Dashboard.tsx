@@ -1,20 +1,27 @@
+import DashboardLayout from "@/components/DashboardLayout";
+import SummaryCard from "@/components/SummaryCard";
+import MonthlyExpenseChart from "@/components/MonthlyExpenseChart";
+import CategoryPieChart from "@/components/CategoryPieChart";
 import { useSession } from "@/integrations/supabase/session-context";
-import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-import { showError, showSuccess } from "@/utils/toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, DollarSign, Wallet, TrendingDown, Percent } from "lucide-react";
+import { motion } from "framer-motion";
+
+const mockSummaryData = {
+  totalIncome: 5000,
+  totalExpenses: 1500,
+  remainingBalance: 3500,
+  budgetUsedPercentage: 30,
+};
+
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(amount);
+};
 
 const Dashboard = () => {
-  const { user, isLoading } = useSession();
-
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      showError("Failed to log out: " + error.message);
-    } else {
-      showSuccess("Logged out successfully!");
-    }
-  };
+  const { isLoading, user } = useSession();
 
   if (isLoading) {
     return (
@@ -25,19 +32,63 @@ const Dashboard = () => {
   }
 
   if (!user) {
-    // Should be handled by Index.tsx redirect, but good practice to include
+    // This should ideally be handled by Index.tsx redirect, but we ensure safety here.
     return <p>Redirecting...</p>;
   }
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-4">Welcome to your Dashboard, {user.email}!</h1>
-      <p className="mb-6 text-muted-foreground">This is where your expense tracking magic happens.</p>
-      
-      <Button onClick={handleLogout} variant="destructive">
-        Logout
-      </Button>
-    </div>
+    <DashboardLayout totalBalance={mockSummaryData.remainingBalance}>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="space-y-6"
+      >
+        <h1 className="text-3xl font-bold mb-4 hidden md:block">
+          Welcome back, {user.email?.split('@')[0]}!
+        </h1>
+        
+        {/* Summary Cards */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <SummaryCard
+            title="Total Income 💰"
+            value={formatCurrency(mockSummaryData.totalIncome)}
+            icon={Wallet}
+            colorClass="text-green-500"
+            delay={0.2}
+          />
+          <SummaryCard
+            title="Total Expenses 💸"
+            value={formatCurrency(mockSummaryData.totalExpenses)}
+            icon={TrendingDown}
+            colorClass="text-red-500"
+            delay={0.4}
+          />
+          <SummaryCard
+            title="Remaining Balance 💵"
+            value={formatCurrency(mockSummaryData.remainingBalance)}
+            icon={DollarSign}
+            colorClass={mockSummaryData.remainingBalance >= 0 ? "text-blue-500" : "text-destructive"}
+            delay={0.6}
+          />
+          <SummaryCard
+            title="Budget Used % 📊"
+            value={`${mockSummaryData.budgetUsedPercentage}%`}
+            icon={Percent}
+            colorClass="text-yellow-500"
+            delay={0.8}
+          />
+        </div>
+
+        {/* Charts */}
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <MonthlyExpenseChart />
+          </div>
+          <CategoryPieChart />
+        </div>
+      </motion.div>
+    </DashboardLayout>
   );
 };
 
