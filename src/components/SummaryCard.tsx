@@ -23,7 +23,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: delay }}
     >
-      <Card>
+      <Card className="bg-card/60 backdrop-blur-md border-border/50 shadow-sm hover:shadow-lg transition-shadow">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">{title}</CardTitle>
           <Icon className={cn("h-4 w-4", colorClass)} />

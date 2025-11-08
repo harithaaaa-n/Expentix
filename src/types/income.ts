@@ -20,5 +20,3 @@ export type Income = z.infer<typeof IncomeSchema> & {
   user_id: string;
   created_at: string;
 };
-
-export type IncomeFormValues = z.infer<typeof IncomeSchema>;
