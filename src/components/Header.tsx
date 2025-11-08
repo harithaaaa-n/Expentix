@@ -47,7 +47,8 @@ const Header: React.FC<HeaderProps> = ({ totalBalance }) => {
           </span>
         </div>
 
-        <div className="hidden md:block">
+        {/* Theme Toggle is now always visible in the header */}
+        <div>
           <ThemeToggle />
         </div>
 
