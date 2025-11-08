@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/integrations/supabase/session-context";
 import { Income } from "@/types/income";
 import { Expense } from "@/types/expense";
-import { format } from "date-fns";
+import { format, subMonths, startOfMonth, endOfMonth } from "date-fns";
 
 interface MonthlyExpenseData {
   month: string;
@@ -21,6 +21,13 @@ interface FinancialSummary {
   remainingBalance: number;
   monthlyExpenses: MonthlyExpenseData[];
   categoryExpenses: CategoryExpenseData[];
+  comparison: {
+    currentMonthExpenses: number;
+    lastMonthExpenses: number;
+    expenseDifference: number;
+    expenseChangePercent: number;
+  };
+  topCategories: CategoryExpenseData[];
   isLoading: boolean;
 }
 
@@ -47,33 +54,59 @@ const processFinancialData = (
   const totalExpenses = expenseRecords.reduce((sum, record) => sum + parseFloat(String(record.amount)), 0);
   const remainingBalance = totalIncome - totalExpenses;
 
-  // Monthly Expenses Calculation
+  const now = new Date();
+  const currentMonthStart = startOfMonth(now);
+  const lastMonthStart = startOfMonth(subMonths(now, 1));
+  const lastMonthEnd = endOfMonth(subMonths(now, 1));
+
+  let currentMonthExpenses = 0;
+  let lastMonthExpenses = 0;
+
+  // Monthly & Category Calculations
   const monthlyMap = new Map<string, number>();
+  const categoryMap = new Map<string, number>();
+
   expenseRecords.forEach(expense => {
     const date = new Date(expense.expense_date);
-    // Use YYYY-MM format for correct chronological sorting across years
-    const monthKey = format(date, 'yyyy-MM'); 
     const amount = parseFloat(String(expense.amount));
+
+    // Monthly aggregation
+    const monthKey = format(date, 'yyyy-MM'); 
     monthlyMap.set(monthKey, (monthlyMap.get(monthKey) || 0) + amount);
+
+    // Category aggregation
+    const category = expense.category;
+    categoryMap.set(category, (categoryMap.get(category) || 0) + amount);
+
+    // Month-over-month comparison
+    if (date >= currentMonthStart) {
+      currentMonthExpenses += amount;
+    } else if (date >= lastMonthStart && date <= lastMonthEnd) {
+      lastMonthExpenses += amount;
+    }
   });
 
-  // Convert map to array and sort by month key
+  // Monthly Expenses Array
   const monthlyExpenses = Array.from(monthlyMap.entries())
     .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
     .map(([key, expenses]) => ({ 
-      month: format(new Date(key + '-01'), 'MMM yy'), // Display as 'Jan 24'
+      month: format(new Date(key + '-01'), 'MMM yy'),
       expenses: expenses 
     }));
 
-  // Category Expenses Calculation
-  const categoryMap = new Map<string, number>();
-  expenseRecords.forEach(expense => {
-    const category = expense.category;
-    const amount = parseFloat(String(expense.amount));
-    categoryMap.set(category, (categoryMap.get(category) || 0) + amount);
-  });
-
+  // Category Expenses Array
   const categoryExpenses = Array.from(categoryMap.entries()).map(([name, value]) => ({ name, value }));
+
+  // Top Categories (Top 3)
+  const topCategories = categoryExpenses
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 3);
+
+  // Comparison Calculation
+  const expenseDifference = currentMonthExpenses - lastMonthExpenses;
+  const expenseChangePercent = lastMonthExpenses > 0 
+    ? (expenseDifference / lastMonthExpenses) * 100 
+    : (currentMonthExpenses > 0 ? 100 : 0);
 
   return {
     totalIncome,
@@ -81,6 +114,13 @@ const processFinancialData = (
     remainingBalance,
     monthlyExpenses,
     categoryExpenses,
+    comparison: {
+      currentMonthExpenses,
+      lastMonthExpenses,
+      expenseDifference,
+      expenseChangePercent,
+    },
+    topCategories,
   };
 };
 
@@ -91,7 +131,6 @@ export const useFinancialSummary = (): FinancialSummary => {
     queryKey: ['financialSummary', user?.id],
     queryFn: () => fetchFinancialData(user!.id),
     enabled: !!user && !isSessionLoading,
-    // Keep data fresh for 5 minutes
     staleTime: 1000 * 60 * 5, 
   });
 
@@ -99,13 +138,22 @@ export const useFinancialSummary = (): FinancialSummary => {
     console.error("Failed to fetch financial data.");
   }
 
-  const processedData = data ? processFinancialData(data.incomeRecords, data.expenseRecords) : {
+  const defaultProcessedData = {
     totalIncome: 0,
     totalExpenses: 0,
     remainingBalance: 0,
     monthlyExpenses: [],
     categoryExpenses: [],
+    comparison: {
+      currentMonthExpenses: 0,
+      lastMonthExpenses: 0,
+      expenseDifference: 0,
+      expenseChangePercent: 0,
+    },
+    topCategories: [],
   };
+
+  const processedData = data ? processFinancialData(data.incomeRecords, data.expenseRecords) : defaultProcessedData;
 
   return {
     ...processedData,
