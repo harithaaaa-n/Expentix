@@ -10,6 +10,7 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import ExpenseManagement from "./pages/ExpenseManagement";
 import IncomeManagement from "./pages/IncomeManagement";
+import Settings from "./pages/Settings";
 import { SessionContextProvider } from "./integrations/supabase/session-context";
 import { ThemeProvider } from "./components/ThemeProvider";
 
@@ -30,6 +31,7 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/expenses/add" element={<ExpenseManagement />} />
               <Route path="/income" element={<IncomeManagement />} />
+              <Route path="/settings" element={<Settings />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
