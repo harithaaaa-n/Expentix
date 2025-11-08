@@ -41,7 +41,8 @@ const Header: React.FC<HeaderProps> = ({ totalBalance }) => {
       </div>
       
       <div className="flex items-center gap-4">
-        <div className="hidden sm:block text-lg font-bold text-primary">
+        {/* Balance is now visible on all screen sizes */}
+        <div className="text-sm sm:text-lg font-bold text-primary">
           Balance: <span className={totalBalance >= 0 ? "text-green-600" : "text-destructive"}>
             {formatCurrency(totalBalance)}
           </span>

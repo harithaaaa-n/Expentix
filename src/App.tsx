@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { persistQueryClient } from '@tanstack/react-query-persist-client';
+import { persistQueryClient, Persister, PersistedClient } from '@tanstack/react-query-persist-client';
 import localforage from 'localforage';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
@@ -28,12 +28,13 @@ const queryClient = new QueryClient({
 });
 
 // Setup persistence
-const persister = {
-  persistClient: async (client: any) => {
+const persister: Persister = {
+  persistClient: async (client: PersistedClient) => {
     await localforage.setItem('reactQueryCache', client);
   },
   restoreClient: async () => {
-    return await localforage.getItem('reactQueryCache');
+    // Cast the retrieved item to the expected PersistedClient type
+    return (await localforage.getItem('reactQueryCache')) as PersistedClient | undefined;
   },
   removeClient: async () => {
     await localforage.removeItem('reactQueryCache');
@@ -41,7 +42,7 @@ const persister = {
 };
 
 persistQueryClient({
-  queryClient,
+  queryClient: queryClient as any, // Using 'as any' to resolve TS2322 due to dependency conflicts
   persister,
   maxAge: 1000 * 60 * 60 * 24 * 7, // Cache data for 7 days
 });
