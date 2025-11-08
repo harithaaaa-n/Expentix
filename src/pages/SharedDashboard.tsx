@@ -32,7 +32,7 @@ const SharedDashboard: React.FC = () => {
     monthlyExpenses, 
     categoryExpenses, 
     isLoading: isFinancialLoading 
-  } = useFinancialSummary(ownerUserId);
+  } = useFinancialSummary(ownerUserId || undefined);
 
   const isLoading = isResolving || isFinancialLoading;
   const budgetUsedPercentage = totalIncome > 0 ? Math.round((totalExpenses / totalIncome) * 100) : 0;
