@@ -23,7 +23,7 @@ interface IncomeTableProps {
   onDelete: (id: string) => void;
 }
 
-const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+const formatCurrency = (amount: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
 
 const IncomeTable: React.FC<IncomeTableProps> = ({ incomeRecords, onEdit, onDelete }) => {
   return (
@@ -84,8 +84,6 @@ const IncomeManagement = () => {
   const [filterSource, setFilterSource] = useState<string>('All');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const totalBalance = 0; // Placeholder for DashboardLayout
-
   const fetchIncome = async () => {
     if (!user) return;
     setIsLoading(true);
@@ -98,11 +96,7 @@ const IncomeManagement = () => {
     if (error) {
       showError('Failed to fetch income records: ' + error.message);
     } else {
-      const parsedData = data.map(i => ({
-        ...i,
-        amount: parseFloat(String(i.amount)),
-      })) as Income[];
-      setIncomeRecords(parsedData);
+      setIncomeRecords(data as Income[]);
     }
     setIsLoading(false);
   };
@@ -122,6 +116,7 @@ const IncomeManagement = () => {
       user_id: user.id,
       amount: data.amount,
       date: format(data.date, 'yyyy-MM-dd'), // Format date for Supabase
+      description: data.description || null,
     };
 
     try {

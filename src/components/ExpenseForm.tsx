@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ExpenseFormValues, ExpenseSchema, ExpenseCategories } from '@/types/expense';
+import { ExpenseFormValues, ExpenseSchema, ExpenseCategories, PaymentTypes } from '@/types/expense';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -12,22 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { CalendarIcon, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-
-// Define Payment Types for the form
-export const PaymentTypes = [
-  "Credit Card",
-  "Debit Card",
-  "Cash",
-  "UPI/Digital Wallet",
-  "Bank Transfer",
-] as const;
-
-// Extend the Expense Schema for form validation
-const ExpenseFormSchema = ExpenseSchema.extend({
-  payment_type: z.enum(PaymentTypes).optional(),
-});
-
-export type ExpenseFormValues = z.infer<typeof ExpenseFormSchema>;
+import ReceiptUploader from './ReceiptUploader';
 
 interface ExpenseFormProps {
   initialData?: ExpenseFormValues;
@@ -37,7 +22,7 @@ interface ExpenseFormProps {
 
 const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit, isSubmitting }) => {
   const form = useForm<ExpenseFormValues>({
-    resolver: zodResolver(ExpenseFormSchema),
+    resolver: zodResolver(ExpenseSchema),
     defaultValues: initialData || {
       title: '',
       amount: 0,
@@ -45,8 +30,12 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit, isSubm
       expense_date: new Date(),
       payment_type: PaymentTypes[0],
       description: '',
+      receipt_url: null,
     },
   });
+
+  const { setValue, watch } = form;
+  const receiptUrl = watch('receipt_url');
 
   React.useEffect(() => {
     if (initialData) {
@@ -61,6 +50,10 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit, isSubm
     }
   }, [initialData, form.reset]);
 
+
+  const handleReceiptUpload = (url: string) => {
+    setValue('receipt_url', url, { shouldValidate: true });
+  };
 
   return (
     <Form {...form}>
@@ -178,7 +171,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit, isSubm
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Payment Type</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} defaultValue={field.value || PaymentTypes[0]}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select payment type" />
@@ -211,6 +204,13 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit, isSubm
               <FormMessage />
             </FormItem>
           )}
+        />
+
+        {/* Receipt Upload */}
+        <ReceiptUploader 
+          onUploadSuccess={handleReceiptUpload} 
+          initialUrl={receiptUrl}
+          disabled={isSubmitting}
         />
 
         <Button type="submit" className="w-full" disabled={isSubmitting}>
