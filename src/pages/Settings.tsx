@@ -6,11 +6,8 @@ import BudgetManager from "@/components/BudgetManager";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Settings = () => {
-  // totalBalance is required by DashboardLayout, but we don't need real data here.
-  const totalBalance = 0; 
-
   return (
-    <DashboardLayout totalBalance={totalBalance}>
+    <DashboardLayout>
       <div className="space-y-6">
         <h1 className="text-3xl font-bold">Settings</h1>
         

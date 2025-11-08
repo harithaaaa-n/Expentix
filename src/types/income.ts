@@ -18,7 +18,6 @@ export const IncomeSchema = z.object({
 
 export type IncomeFormValues = z.infer<typeof IncomeSchema>;
 
-// Type for data fetched directly from Supabase
 export type Income = Omit<IncomeFormValues, 'date'> & {
   date: string; // Date string from DB
   user_id: string;

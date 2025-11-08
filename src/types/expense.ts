@@ -32,7 +32,6 @@ export const ExpenseSchema = z.object({
 
 export type ExpenseFormValues = z.infer<typeof ExpenseSchema>;
 
-// Type for data fetched directly from Supabase
 export type Expense = Omit<ExpenseFormValues, 'expense_date'> & {
   expense_date: string; // Date string from DB
   user_id: string;

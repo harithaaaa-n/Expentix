@@ -59,7 +59,7 @@ const SmartSuggestionBanner: React.FC = () => {
   
   const message = status === 'danger'
     ? `You have exceeded your ${category} budget by ${((spent - budgeted) / budgeted * 100).toFixed(0)}%! Consider cutting back.`
-    : `You've spent ${percentage}% of your ${category} budget ($${spent.toFixed(2)} / $${budgeted.toFixed(2)}) this month. Be mindful!`;
+    : `You've spent ${percentage.toFixed(1)}% of your ${category} budget ($${spent.toFixed(2)} / $${budgeted.toFixed(2)}) this month. Be mindful!`;
 
   return (
     <AnimatePresence>

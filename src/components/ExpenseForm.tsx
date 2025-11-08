@@ -171,7 +171,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit, isSubm
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Payment Type</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} defaultValue={field.value || PaymentTypes[0]}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select payment type" />

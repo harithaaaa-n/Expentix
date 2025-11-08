@@ -84,8 +84,6 @@ const IncomeManagement = () => {
   const [filterSource, setFilterSource] = useState<string>('All');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const totalBalance = 0; // Placeholder for DashboardLayout
-
   const fetchIncome = async () => {
     if (!user) return;
     setIsLoading(true);
@@ -118,6 +116,7 @@ const IncomeManagement = () => {
       user_id: user.id,
       amount: data.amount,
       date: format(data.date, 'yyyy-MM-dd'), // Format date for Supabase
+      description: data.description || null,
     };
 
     try {
@@ -215,7 +214,7 @@ const IncomeManagement = () => {
   }
 
   return (
-    <DashboardLayout totalBalance={0}>
+    <DashboardLayout>
       <div className="space-y-6">
         <h1 className="text-3xl font-bold">Income Management</h1>
 

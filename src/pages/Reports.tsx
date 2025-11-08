@@ -36,7 +36,7 @@ const Reports = () => {
   }
 
   return (
-    <DashboardLayout totalBalance={remainingBalance}>
+    <DashboardLayout>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -59,7 +59,7 @@ const Reports = () => {
         <div className="grid gap-6 lg:grid-cols-3">
           <ComparisonCard data={comparison} />
           <div className="lg:col-span-2">
-            <TopCategoriesList data={categoryExpenses} totalExpenses={totalExpenses} />
+            <TopCategoriesList data={topCategories} totalExpenses={totalExpenses} />
           </div>
         </div>
 

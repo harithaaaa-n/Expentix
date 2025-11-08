@@ -94,8 +94,6 @@ const ExpenseManagement = () => {
   const [filterCategory, setFilterCategory] = useState<string>('All');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const totalBalance = 0; // Placeholder for DashboardLayout
-
   const fetchExpenses = async () => {
     if (!user) return;
     setIsLoading(true);
@@ -129,6 +127,8 @@ const ExpenseManagement = () => {
       amount: data.amount, // Ensure amount is numeric
       expense_date: format(data.expense_date, 'yyyy-MM-dd'), // Format date for Supabase
       receipt_url: data.receipt_url || null,
+      payment_type: data.payment_type || null,
+      description: data.description || null,
     };
 
     try {
@@ -226,7 +226,7 @@ const ExpenseManagement = () => {
   }
 
   return (
-    <DashboardLayout totalBalance={totalBalance}>
+    <DashboardLayout>
       <div className="space-y-6">
         <h1 className="text-3xl font-bold">Expense Management</h1>
 
