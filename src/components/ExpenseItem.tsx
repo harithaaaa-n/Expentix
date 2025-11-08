@@ -2,7 +2,7 @@ import React from 'react';
 import { Expense } from '@/types/expense';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { format } from 'date-fns';
-import { Tag, DollarSign, Calendar, Trash2, Edit, FileText } from 'lucide-react';
+import { Tag, DollarSign, Calendar, Trash2, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -14,9 +14,9 @@ interface ExpenseItemProps {
 }
 
 const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-IN', {
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'INR',
+    currency: 'USD',
   }).format(amount);
 };
 
@@ -60,22 +60,13 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({ expense, onEdit, onDelete }) 
             </p>
           )}
 
-          <div className="flex justify-between items-center pt-2 border-t">
-            {expense.receipt_url ? (
-              <a href={expense.receipt_url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-500 hover:underline flex items-center">
-                <FileText className="h-3 w-3 mr-1" /> View Receipt
-              </a>
-            ) : (
-              <span className="text-xs text-muted-foreground">No receipt attached</span>
-            )}
-            <div className="space-x-2">
-              <Button variant="outline" size="sm" onClick={() => onEdit(expense)}>
-                <Edit className="h-4 w-4" />
-              </Button>
-              <Button variant="destructive" size="sm" onClick={() => onDelete(expense.id!)}>
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
+          <div className="flex justify-end space-x-2 pt-2 border-t">
+            <Button variant="outline" size="sm" onClick={() => onEdit(expense)}>
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button variant="destructive" size="sm" onClick={() => onDelete(expense.id!)}>
+              <Trash2 className="h-4 w-4" />
+            </Button>
           </div>
         </CardContent>
       </Card>

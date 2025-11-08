@@ -25,15 +25,13 @@ export const ExpenseSchema = z.object({
   amount: z.number().min(0.01, "Amount must be greater than zero"),
   category: z.enum(ExpenseCategories),
   expense_date: z.date(),
-  payment_type: z.enum(PaymentTypes).optional().nullable(),
+  payment_type: z.enum(PaymentTypes).optional().nullable(), // Added payment type
   description: z.string().max(255).optional().nullable(),
-  receipt_url: z.string().url().optional().or(z.literal('')).nullable(),
 });
 
 export type ExpenseFormValues = z.infer<typeof ExpenseSchema>;
 
-export type Expense = Omit<ExpenseFormValues, 'expense_date'> & {
-  expense_date: string; // Date string from DB
+export type Expense = z.infer<typeof ExpenseSchema> & {
   user_id: string;
   created_at: string;
 };

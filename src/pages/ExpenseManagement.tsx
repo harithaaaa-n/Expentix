@@ -2,12 +2,12 @@ import React, { useState, useEffect, useMemo } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { useSession } from '@/integrations/supabase/session-context';
 import { supabase } from '@/integrations/supabase/client';
-import { Expense, ExpenseFormValues, ExpenseCategories } from '@/types/expense';
+import { Expense, ExpenseCategories } from '@/types/expense';
+import ExpenseForm, { ExpenseFormValues, PaymentTypes } from '@/components/ExpenseForm';
 import { Loader2, Plus, List, Table, Filter, Search, Edit, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { showError, showSuccess } from '@/utils/toast';
-import ExpenseForm from '@/components/ExpenseForm';
 import ExpenseItem from '@/components/ExpenseItem';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
@@ -24,7 +24,7 @@ interface ExpenseTableProps {
 }
 
 const ExpenseTable: React.FC<ExpenseTableProps> = ({ expenses, onEdit, onDelete }) => {
-  const formatCurrency = (amount: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 
   return (
     <div className="overflow-x-auto">
@@ -36,7 +36,6 @@ const ExpenseTable: React.FC<ExpenseTableProps> = ({ expenses, onEdit, onDelete 
             <th className="px-4 py-2">Category</th>
             <th className="px-4 py-2">Date</th>
             <th className="px-4 py-2">Payment</th>
-            <th className="px-4 py-2">Receipt</th>
             <th className="px-4 py-2 text-right">Actions</th>
           </tr>
         </thead>
@@ -58,13 +57,6 @@ const ExpenseTable: React.FC<ExpenseTableProps> = ({ expenses, onEdit, onDelete 
                 <td className="px-4 py-3 text-sm">{expense.category}</td>
                 <td className="px-4 py-3 text-sm">{format(new Date(expense.expense_date), 'MMM dd, yyyy')}</td>
                 <td className="px-4 py-3 text-sm">{expense.payment_type || 'N/A'}</td>
-                <td className="px-4 py-3 text-sm">
-                  {expense.receipt_url ? (
-                    <a href={expense.receipt_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                      View
-                    </a>
-                  ) : 'No'}
-                </td>
                 <td className="px-4 py-3 text-right space-x-2">
                   <Button variant="outline" size="sm" onClick={() => onEdit(expense)}>
                     <Edit className="h-4 w-4" />
@@ -94,6 +86,8 @@ const ExpenseManagement = () => {
   const [filterCategory, setFilterCategory] = useState<string>('All');
   const [searchTerm, setSearchTerm] = useState('');
 
+  const totalBalance = 0; // Placeholder for DashboardLayout
+
   const fetchExpenses = async () => {
     if (!user) return;
     setIsLoading(true);
@@ -106,7 +100,12 @@ const ExpenseManagement = () => {
     if (error) {
       showError('Failed to fetch expenses: ' + error.message);
     } else {
-      setExpenses(data as Expense[]);
+      // Ensure amount is parsed as number for local state
+      const parsedData = data.map(e => ({
+        ...e,
+        amount: parseFloat(String(e.amount)),
+      })) as Expense[];
+      setExpenses(parsedData);
     }
     setIsLoading(false);
   };
@@ -126,9 +125,6 @@ const ExpenseManagement = () => {
       user_id: user.id,
       amount: data.amount, // Ensure amount is numeric
       expense_date: format(data.expense_date, 'yyyy-MM-dd'), // Format date for Supabase
-      receipt_url: data.receipt_url || null,
-      payment_type: data.payment_type || null,
-      description: data.description || null,
     };
 
     try {

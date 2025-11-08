@@ -14,9 +14,9 @@ interface IncomeItemProps {
 }
 
 const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-IN', {
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'INR',
+    currency: 'USD',
   }).format(amount);
 };
 
@@ -54,15 +54,13 @@ const IncomeItem: React.FC<IncomeItemProps> = ({ income, onEdit, onDelete }) => 
             </p>
           )}
 
-          <div className="flex justify-end items-center pt-2 border-t">
-            <div className="space-x-2">
-              <Button variant="outline" size="sm" onClick={() => onEdit(income)}>
-                <Edit className="h-4 w-4" />
-              </Button>
-              <Button variant="destructive" size="sm" onClick={() => onDelete(income.id!)}>
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
+          <div className="flex justify-end space-x-2 pt-2 border-t">
+            <Button variant="outline" size="sm" onClick={() => onEdit(income)}>
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button variant="destructive" size="sm" onClick={() => onDelete(income.id!)}>
+              <Trash2 className="h-4 w-4" />
+            </Button>
           </div>
         </CardContent>
       </Card>

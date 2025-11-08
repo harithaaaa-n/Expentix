@@ -2,6 +2,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import SummaryCard from "@/components/SummaryCard";
 import MonthlyExpenseChart from "@/components/MonthlyExpenseChart";
 import CategoryPieChart from "@/components/CategoryPieChart";
+import RecentActivityTable from "@/components/RecentActivityTable";
 import { useSession } from "@/integrations/supabase/session-context";
 import { Loader2, DollarSign, Wallet, TrendingDown, Target } from "lucide-react";
 import { motion } from "framer-motion";
@@ -22,6 +23,7 @@ const Dashboard = () => {
     remainingBalance, 
     monthlyExpenses, 
     categoryExpenses, 
+    recentExpenses, // Added recentExpenses
     isLoading 
   } = useFinancialSummary();
 
@@ -84,6 +86,9 @@ const Dashboard = () => {
           <MonthlyExpenseChart data={monthlyExpenses} />
           <CategoryPieChart data={categoryExpenses} />
         </div>
+
+        {/* Recent Activity */}
+        <RecentActivityTable expenses={recentExpenses} />
       </motion.div>
     </DashboardLayout>
   );
