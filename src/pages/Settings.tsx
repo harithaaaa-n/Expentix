@@ -3,6 +3,7 @@ import ProfileForm from "@/components/ProfileForm";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import BudgetManager from "@/components/BudgetManager";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import AccountManagement from "@/components/AccountManagement";
 
 const Settings = () => {
   return (
@@ -42,20 +43,8 @@ const Settings = () => {
           </CardContent>
         </Card>
 
-        {/* Account Management Placeholder */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Account Management</CardTitle>
-            <CardDescription>
-              Future settings like password change or account deletion will go here.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              More account settings coming soon.
-            </p>
-          </CardContent>
-        </Card>
+        {/* Account Management */}
+        <AccountManagement />
       </div>
     </DashboardLayout>
   );

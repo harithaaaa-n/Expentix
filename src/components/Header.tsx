@@ -6,9 +6,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { showError, showSuccess } from "@/utils/toast";
 import { ThemeToggle } from "./ThemeToggle";
 import { useNavigate } from "react-router-dom";
+import { useOwnerProfile } from "@/hooks/use-owner-profile";
 
 const Header = () => {
   const { user } = useSession();
+  const { data: ownerProfileData } = useOwnerProfile();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -21,19 +23,20 @@ const Header = () => {
     }
   };
 
-  const userInitials = user?.email ? user.email.substring(0, 2).toUpperCase() : 'U';
+  const userInitials = ownerProfileData?.ownerName ? ownerProfileData.ownerName.substring(0, 2).toUpperCase() : 'U';
+  const greetingName = ownerProfileData?.ownerName || user?.email?.split('@')[0];
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-background/80 backdrop-blur-md px-4 md:px-6 md:ml-64">
       <div>
         <h1 className="text-xl font-semibold hidden md:block">
-          Good Evening, {user?.email?.split('@')[0]} 🌙
+          Good Evening, {greetingName} 🌙
         </h1>
       </div>
       <div className="flex items-center gap-4">
         <ThemeToggle />
         <Avatar className="h-9 w-9">
-          <AvatarImage src={user?.user_metadata?.avatar_url} alt={user?.email} />
+          <AvatarImage src={ownerProfileData?.profile?.avatar_url || ''} alt={user?.email} />
           <AvatarFallback>{userInitials}</AvatarFallback>
         </Avatar>
         <Button variant="ghost" size="icon" onClick={handleLogout} title="Logout">
