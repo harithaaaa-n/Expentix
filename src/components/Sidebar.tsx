@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, DollarSign, TrendingUp, BarChart3, Users, Settings, Menu, Zap } from "lucide-react";
+import { Home, DollarSign, TrendingUp, BarChart3, Users, Settings, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -9,7 +9,6 @@ const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
   { name: "Expenses", href: "/expenses", icon: DollarSign },
   { name: "Income", href: "/income", icon: TrendingUp },
-  { name: "Bills", href: "/bills", icon: Zap }, // New Bills link
   { name: "Reports", href: "/reports", icon: BarChart3 },
   { name: "Family", href: "/family", icon: Users },
   { name: "Settings", href: "/settings", icon: Settings },
