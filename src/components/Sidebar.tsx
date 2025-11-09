@@ -19,10 +19,10 @@ const SidebarContent = () => {
   const location = useLocation();
   return (
     <div className="flex flex-col gap-2 p-4 h-full">
-      <div className="flex h-16 items-center px-4">
+      <div className="flex h-16 items-center px-2 mb-4">
         <Link to="/" className="flex items-center gap-2">
-          <Wallet className="h-6 w-6 text-indigo-600" />
-          <h1 className="text-lg font-bold text-primary">Expentix</h1>
+          <Wallet className="h-7 w-7 text-blue-600 dark:text-blue-400" />
+          <h1 className="text-xl font-bold text-primary">Expentix</h1>
         </Link>
       </div>
       <nav className="grid gap-1 flex-grow">
@@ -33,9 +33,9 @@ const SidebarContent = () => {
               key={item.name}
               to={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 transition-all",
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-200 text-base font-medium",
                 isActive
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-md shadow-sidebar-primary/30"
                   : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
               )}
             >
@@ -60,7 +60,7 @@ export const Sidebar = () => {
             <Menu className="h-6 w-6" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="p-0 w-64 flex flex-col bg-sidebar">
+        <SheetContent side="left" className="p-0 w-64 flex flex-col bg-sidebar border-r-sidebar-border">
           <SidebarContent />
         </SheetContent>
       </Sheet>
@@ -68,7 +68,7 @@ export const Sidebar = () => {
   }
 
   return (
-    <div className="hidden md:flex flex-col h-screen w-64 border-r bg-sidebar fixed top-0 left-0">
+    <div className="hidden md:flex flex-col h-screen w-64 border-r border-sidebar-border bg-sidebar fixed top-0 left-0">
       <SidebarContent />
     </div>
   );
