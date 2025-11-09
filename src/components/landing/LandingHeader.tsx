@@ -6,6 +6,7 @@ import { Wallet, Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { useSession } from '@/integrations/supabase/session-context';
 
 const navLinks = [
   { name: 'Features', href: '#features' },
@@ -26,6 +27,7 @@ const NavLink: React.FC<{ href: string; children: React.ReactNode; onClick?: () 
 const LandingHeader: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const isMobile = useIsMobile();
+  const { user } = useSession();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -66,12 +68,20 @@ const LandingHeader: React.FC = () => {
           <div className="flex items-center space-x-3">
             {!isMobile ? (
               <>
-                <Link to="/login">
-                  <Button variant="ghost">Login</Button>
-                </Link>
-                <Link to="/signup">
-                  <Button>Sign Up</Button>
-                </Link>
+                {user ? (
+                  <Link to="/dashboard">
+                    <Button>Go to Dashboard</Button>
+                  </Link>
+                ) : (
+                  <>
+                    <Link to="/login">
+                      <Button variant="ghost">Login</Button>
+                    </Link>
+                    <Link to="/signup">
+                      <Button>Sign Up</Button>
+                    </Link>
+                  </>
+                )}
               </>
             ) : (
               <Sheet>
@@ -101,16 +111,26 @@ const LandingHeader: React.FC = () => {
                       ))}
                     </nav>
                     <div className="mt-auto pt-6 border-t border-border space-y-3">
-                       <SheetClose asChild>
-                          <Link to="/login" className="w-full">
-                            <Button variant="outline" className="w-full">Login</Button>
-                          </Link>
-                       </SheetClose>
-                       <SheetClose asChild>
-                          <Link to="/signup" className="w-full">
-                            <Button className="w-full">Sign Up</Button>
-                          </Link>
-                       </SheetClose>
+                       {user ? (
+                         <SheetClose asChild>
+                           <Link to="/dashboard" className="w-full">
+                             <Button className="w-full">Go to Dashboard</Button>
+                           </Link>
+                         </SheetClose>
+                       ) : (
+                         <>
+                           <SheetClose asChild>
+                             <Link to="/login" className="w-full">
+                               <Button variant="outline" className="w-full">Login</Button>
+                             </Link>
+                           </SheetClose>
+                           <SheetClose asChild>
+                             <Link to="/signup" className="w-full">
+                               <Button className="w-full">Sign Up</Button>
+                             </Link>
+                           </SheetClose>
+                         </>
+                       )}
                     </div>
                   </div>
                 </SheetContent>

@@ -1,5 +1,4 @@
 import { useSession } from "@/integrations/supabase/session-context";
-import { Navigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import LandingHeader from "@/components/landing/LandingHeader";
 import HeroSection from "@/components/landing/HeroSection";
@@ -10,7 +9,7 @@ import CtaSection from "@/components/landing/CtaSection";
 import LandingFooter from "@/components/landing/LandingFooter";
 
 const Index = () => {
-  const { isLoading, user } = useSession();
+  const { isLoading } = useSession();
 
   if (isLoading) {
     return (
@@ -18,11 +17,6 @@ const Index = () => {
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
-  }
-
-  if (user) {
-    // Redirect authenticated users to the dashboard
-    return <Navigate to="/dashboard" replace />;
   }
 
   return (
