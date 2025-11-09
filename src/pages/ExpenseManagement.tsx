@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import DashboardLayout from '@/components/DashboardLayout';
 import { useSession } from '@/integrations/supabase/session-context';
 import { supabase } from '@/integrations/supabase/client';
 import { Expense, ExpenseFormValues, ExpenseCategories } from '@/types/expense';
@@ -228,104 +227,102 @@ const ExpenseManagement = () => {
   }
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
-        <h1 className="text-3xl font-bold">Expense Management</h1>
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold">Expense Management</h1>
 
-        {/* Controls and Filters */}
-        <Card className="p-4 flex flex-col md:flex-row gap-4 justify-between items-center">
-          
-          {/* Add Button */}
-          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={handleAdd} className="w-full md:w-auto">
-                <Plus className="mr-2 h-4 w-4" /> Add New Expense
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px]">
-              <DialogHeader>
-                <DialogTitle>{editingExpense ? 'Edit Expense' : 'Add New Expense'}</DialogTitle>
-              </DialogHeader>
-              <ExpenseForm 
-                initialData={editingExpense} 
-                onSubmit={handleFormSubmit} 
-                isSubmitting={isSubmitting}
-              />
-            </DialogContent>
-          </Dialog>
+      {/* Controls and Filters */}
+      <Card className="p-4 flex flex-col md:flex-row gap-4 justify-between items-center">
+        
+        {/* Add Button */}
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogTrigger asChild>
+            <Button onClick={handleAdd} className="w-full md:w-auto">
+              <Plus className="mr-2 h-4 w-4" /> Add New Expense
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>{editingExpense ? 'Edit Expense' : 'Add New Expense'}</DialogTitle>
+            </DialogHeader>
+            <ExpenseForm 
+              initialData={editingExpense} 
+              onSubmit={handleFormSubmit} 
+              isSubmitting={isSubmitting}
+            />
+          </DialogContent>
+        </Dialog>
 
-          {/* Filters and View Toggle */}
-          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-            {/* Search */}
-            <div className="relative w-full sm:w-48">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input 
-                placeholder="Search title/desc..." 
-                className="pl-9"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+        {/* Filters and View Toggle */}
+        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+          {/* Search */}
+          <div className="relative w-full sm:w-48">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input 
+              placeholder="Search title/desc..." 
+              className="pl-9"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
 
-            {/* Category Filter */}
-            <Select onValueChange={setFilterCategory} defaultValue="All">
-              <SelectTrigger className="w-full sm:w-[180px]">
-                <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
-                <SelectValue placeholder="Filter by Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="All">All Categories</SelectItem>
-                {ExpenseCategories.map(category => (
-                  <SelectItem key={category} value={category}>{category}</SelectItem>
+          {/* Category Filter */}
+          <Select onValueChange={setFilterCategory} defaultValue="All">
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
+              <SelectValue placeholder="Filter by Category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="All">All Categories</SelectItem>
+              {ExpenseCategories.map(category => (
+                <SelectItem key={category} value={category}>{category}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* View Toggle */}
+          <ToggleGroup type="single" value={viewMode} onValueChange={(value: 'table' | 'card') => value && setViewMode(value)} className="w-full sm:w-auto justify-center">
+            <ToggleGroupItem value="card" aria-label="Toggle card view">
+              <List className="h-4 w-4" />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="table" aria-label="Toggle table view">
+              <Table className="h-4 w-4" />
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+      </Card>
+
+      {/* Expense List/Table */}
+      {filteredExpenses.length === 0 ? (
+        <div className="text-center p-10 text-muted-foreground border rounded-lg">
+          No expenses found. Start by adding a new one!
+        </div>
+      ) : (
+        <>
+          {viewMode === 'card' ? (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <AnimatePresence initial={false}>
+                {filteredExpenses.map((expense) => (
+                  <ExpenseItem 
+                    key={expense.id} 
+                    expense={expense} 
+                    onEdit={handleEdit} 
+                    onDelete={handleDelete} 
+                  />
                 ))}
-              </SelectContent>
-            </Select>
-
-            {/* View Toggle */}
-            <ToggleGroup type="single" value={viewMode} onValueChange={(value: 'table' | 'card') => value && setViewMode(value)} className="w-full sm:w-auto justify-center">
-              <ToggleGroupItem value="card" aria-label="Toggle card view">
-                <List className="h-4 w-4" />
-              </ToggleGroupItem>
-              <ToggleGroupItem value="table" aria-label="Toggle table view">
-                <Table className="h-4 w-4" />
-              </ToggleGroupItem>
-            </ToggleGroup>
-          </div>
-        </Card>
-
-        {/* Expense List/Table */}
-        {filteredExpenses.length === 0 ? (
-          <div className="text-center p-10 text-muted-foreground border rounded-lg">
-            No expenses found. Start by adding a new one!
-          </div>
-        ) : (
-          <>
-            {viewMode === 'card' ? (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <AnimatePresence initial={false}>
-                  {filteredExpenses.map((expense) => (
-                    <ExpenseItem 
-                      key={expense.id} 
-                      expense={expense} 
-                      onEdit={handleEdit} 
-                      onDelete={handleDelete} 
-                    />
-                  ))}
-                </AnimatePresence>
-              </div>
-            ) : (
-              <Card>
-                <ExpenseTable 
-                  expenses={filteredExpenses} 
-                  onEdit={handleEdit} 
-                  onDelete={handleDelete} 
-                />
-              </Card>
-            )}
-          </>
-        )}
-      </div>
-    </DashboardLayout>
+              </AnimatePresence>
+            </div>
+          ) : (
+            <Card>
+              <ExpenseTable 
+                expenses={filteredExpenses} 
+                onEdit={handleEdit} 
+                onDelete={handleDelete} 
+              />
+            </Card>
+          )}
+        </>
+      )}
+    </div>
   );
 };
 

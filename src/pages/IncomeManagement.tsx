@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import DashboardLayout from '@/components/DashboardLayout';
 import { useSession } from '@/integrations/supabase/session-context';
 import { supabase } from '@/integrations/supabase/client';
 import { Income, IncomeFormValues, IncomeSources } from '@/types/income';
@@ -216,29 +215,28 @@ const IncomeManagement = () => {
   }
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
-        <h1 className="text-3xl font-bold">Income Management</h1>
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold">Income Management</h1>
 
-        {/* Controls and Filters */}
-        <Card className="p-4 flex flex-col md:flex-row gap-4 justify-between items-center">
-          
-          {/* Add Button */}
-          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={handleAdd} className="w-full md:w-auto">
-                <Plus className="mr-2 h-4 w-4" /> Add New Income
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px]">
-              <DialogHeader>
-                <DialogTitle>{editingIncome ? 'Edit Income' : 'Add New Income'}</DialogTitle>
-              </DialogHeader>
-              <IncomeForm 
-                initialData={editingIncome} 
-                onSubmit={handleFormSubmit} 
-                isSubmitting={isSubmitting}
-              />
+      {/* Controls and Filters */}
+      <Card className="p-4 flex flex-col md:flex-row gap-4 justify-between items-center">
+        
+        {/* Add Button */}
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogTrigger asChild>
+            <Button onClick={handleAdd} className="w-full md:w-auto">
+              <Plus className="mr-2 h-4 w-4" /> Add New Income
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>{editingIncome ? 'Edit Income' : 'Add New Income'}</DialogTitle>
+            </DialogHeader>
+            <IncomeForm 
+              initialData={editingIncome} 
+              onSubmit={handleFormSubmit} 
+              isSubmitting={isSubmitting}
+            />
             </DialogContent>
           </Dialog>
 
@@ -313,8 +311,7 @@ const IncomeManagement = () => {
           </>
         )}
       </div>
-    </DashboardLayout>
-  );
-};
+    );
+  };
 
 export default IncomeManagement;

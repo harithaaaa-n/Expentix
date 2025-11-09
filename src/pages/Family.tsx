@@ -1,4 +1,3 @@
-import DashboardLayout from "@/components/DashboardLayout";
 import FamilyMemberList, { MemberForm } from "@/components/FamilyMemberManager";
 import FamilyMemberCard from "@/components/FamilyMemberCard";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -150,141 +149,137 @@ const FamilyPage = () => {
 
   if (isLoading || isProfileLoading) {
     return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center h-full">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      </DashboardLayout>
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
     );
   }
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
-        {/* Header and Actions */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold">👨‍👩‍👧 Family Finance Center</h1>
-            <p className="text-muted-foreground">Track, share, and grow together as a family 💫</p>
-          </div>
-          <div className="flex space-x-3 self-start md:self-center">
-            
-            {/* Add Member Button */}
-            <Dialog open={isMemberModalOpen} onOpenChange={setIsMemberModalOpen}>
-              <DialogTrigger asChild>
-                <Button size="sm" onClick={handleAddMember}>
-                  <Plus className="mr-2 h-4 w-4" /> Add Member
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>{editingMember ? 'Edit Member' : 'Add New Member'}</DialogTitle>
-                </DialogHeader>
-                <MemberForm 
-                  initialData={editingMember} 
-                  onSubmit={handleMemberFormSubmit} 
-                  isSubmitting={isSubmitting}
-                />
-              </DialogContent>
-            </Dialog>
+    <div className="space-y-6">
+      {/* Header and Actions */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">👨‍👩‍👧 Family Finance Center</h1>
+          <p className="text-muted-foreground">Track, share, and grow together as a family 💫</p>
+        </div>
+        <div className="flex space-x-3 self-start md:self-center">
+          
+          {/* Add Member Button */}
+          <Dialog open={isMemberModalOpen} onOpenChange={setIsMemberModalOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm" onClick={handleAddMember}>
+                <Plus className="mr-2 h-4 w-4" /> Add Member
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>{editingMember ? 'Edit Member' : 'Add New Member'}</DialogTitle>
+              </DialogHeader>
+              <MemberForm 
+                initialData={editingMember} 
+                onSubmit={handleMemberFormSubmit} 
+                isSubmitting={isSubmitting}
+              />
+            </DialogContent>
+          </Dialog>
 
-            {/* Add Transaction Button (Opens unified form) */}
-            <Dialog open={isTransactionModalOpen} onOpenChange={setIsTransactionModalOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline">
-                  <DollarSign className="mr-2 h-4 w-4" /> Add Transaction
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[600px]">
-                <DialogHeader>
-                  <DialogTitle>Log Family Transaction</DialogTitle>
-                </DialogHeader>
-                <MemberTransactionForm 
-                  members={members}
+          {/* Add Transaction Button (Opens unified form) */}
+          <Dialog open={isTransactionModalOpen} onOpenChange={setIsTransactionModalOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <DollarSign className="mr-2 h-4 w-4" /> Add Transaction
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px]">
+              <DialogHeader>
+                <DialogTitle>Log Family Transaction</DialogTitle>
+              </DialogHeader>
+              <MemberTransactionForm 
+                members={members}
+                ownerName={ownerName}
+                ownerId={ownerId}
+                onSuccess={() => {
+                  setIsTransactionModalOpen(false);
+                  handleTransactionSuccess();
+                }}
+              />
+            </DialogContent>
+          </Dialog>
+          
+          {/* View Family Summary Button (links to Dashboard) */}
+          <Link to="/dashboard">
+            <Button variant="outline">
+              <LayoutDashboard className="mr-2 h-4 w-4" /> View Family Summary
+            </Button>
+          </Link>
+        </div>
+      </div>
+      
+      {/* Individual Member Wallets (Cards) */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Individual Member Wallets</CardTitle>
+          <CardDescription>
+            Track personal income, expenses, and budget progress for each member.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {members.length === 0 ? (
+            <div className="text-center p-4 text-muted-foreground border rounded-lg">
+              No family members added yet. Use the 'Add Member' button above to get started.
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {members.map((member) => (
+                <FamilyMemberCard 
+                  key={member.id} 
+                  member={member} 
                   ownerName={ownerName}
                   ownerId={ownerId}
-                  onSuccess={() => {
-                    setIsTransactionModalOpen(false);
-                    handleTransactionSuccess();
-                  }}
+                  allMembers={members}
+                  onTransactionSuccess={handleTransactionSuccess}
                 />
-              </DialogContent>
-            </Dialog>
-            
-            {/* View Family Summary Button (links to Dashboard) */}
-            <Link to="/dashboard">
-              <Button variant="outline">
-                <LayoutDashboard className="mr-2 h-4 w-4" /> View Family Summary
-              </Button>
-            </Link>
-          </div>
-        </div>
-        
-        {/* Individual Member Wallets (Cards) */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Individual Member Wallets</CardTitle>
-            <CardDescription>
-              Track personal income, expenses, and budget progress for each member.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {members.length === 0 ? (
-              <div className="text-center p-4 text-muted-foreground border rounded-lg">
-                No family members added yet. Use the 'Add Member' button above to get started.
-              </div>
-            ) : (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {members.map((member) => (
-                  <FamilyMemberCard 
-                    key={member.id} 
-                    member={member} 
-                    ownerName={ownerName}
-                    ownerId={ownerId}
-                    allMembers={members}
-                    onTransactionSuccess={handleTransactionSuccess}
-                  />
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-        {/* Family Analytics Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Users className="mr-2 h-5 w-5 text-primary" />
-              Combined Family Analytics
-            </CardTitle>
-            <CardDescription>
-              Visualizations of the entire family's financial health.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-6 lg:grid-cols-2">
-            {/* Combined Category Pie Chart */}
-            <CategoryPieChart data={currentMonthCategoryExpenses} />
-            
-            {/* Member Expense Comparison Bar Chart */}
-            <MemberExpenseComparisonChart members={members} ownerId={ownerId} ownerName={ownerName} />
-          </CardContent>
-        </Card>
+      {/* Family Analytics Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Users className="mr-2 h-5 w-5 text-primary" />
+            Combined Family Analytics
+          </CardTitle>
+          <CardDescription>
+            Visualizations of the entire family's financial health.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-6 lg:grid-cols-2">
+          {/* Combined Category Pie Chart */}
+          <CategoryPieChart data={currentMonthCategoryExpenses} />
+          
+          {/* Member Expense Comparison Bar Chart */}
+          <MemberExpenseComparisonChart members={members} ownerId={ownerId} ownerName={ownerName} />
+        </CardContent>
+      </Card>
 
-        {/* Monthly Leaderboard */}
-        <LeaderboardCard />
+      {/* Monthly Leaderboard */}
+      <LeaderboardCard />
 
-        {/* Family Member Management List */}
-        <FamilyMemberList 
-          members={members} 
-          isLoading={isLoading} 
-          onEdit={handleEdit} 
-          onDelete={handleDelete} 
-        />
+      {/* Family Member Management List */}
+      <FamilyMemberList 
+        members={members} 
+        isLoading={isLoading} 
+        onEdit={handleEdit} 
+        onDelete={handleDelete} 
+      />
 
-        {/* Activity Feed */}
-        <ActivityFeedCard members={members} />
-      </div>
-    </DashboardLayout>
+      {/* Activity Feed */}
+      <ActivityFeedCard members={members} />
+    </div>
   );
 };
 

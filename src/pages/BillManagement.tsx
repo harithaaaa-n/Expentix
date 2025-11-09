@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import DashboardLayout from '@/components/DashboardLayout';
 import { useSession } from '@/integrations/supabase/session-context';
 import { supabase } from '@/integrations/supabase/client';
 import { Bill, BillFormValues, BillCategories, PaymentStatuses } from '@/types/bill';
@@ -200,131 +199,129 @@ const BillManagement = () => {
   }
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
-        <h1 className="text-3xl font-bold flex items-center">
-          <Zap className="mr-3 h-7 w-7 text-blue-500" /> Essential Bills Tracker
-        </h1>
-        <p className="text-muted-foreground">Manage recurring payments, due dates, and payment status.</p>
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold flex items-center">
+        <Zap className="mr-3 h-7 w-7 text-blue-500" /> Essential Bills Tracker
+      </h1>
+      <p className="text-muted-foreground">Manage recurring payments, due dates, and payment status.</p>
 
-        {/* Summary Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <SummaryCard
-            title="Bills This Month"
-            value={formatCurrency(totalCurrentMonthBills)}
-            icon={DollarSign}
-            colorClass="text-blue-500"
-            delay={0.1}
-          />
-          <SummaryCard
-            title="Pending Bills"
-            value={pendingBills.length}
-            icon={Filter}
-            colorClass="text-yellow-500"
-            delay={0.2}
-          />
-          <SummaryCard
-            title="Overdue Bills"
-            value={overdueBills.length}
-            icon={AlertTriangle}
-            colorClass="text-destructive"
-            delay={0.3}
-          />
-          <SummaryCard
-            title="Monthly Trend"
-            value={`${billChangePercent.toFixed(1)}%`}
-            icon={trendIcon}
-            colorClass={trendColor}
-            delay={0.4}
-          />
-        </div>
-
-        {/* Controls and Filters */}
-        <Card className="p-4 flex flex-col md:flex-row gap-4 justify-between items-center">
-          
-          {/* Add Button */}
-          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={handleAdd} className="w-full md:w-auto">
-                <Plus className="mr-2 h-4 w-4" /> Add New Bill
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px]">
-              <DialogHeader>
-                <DialogTitle>{editingBill ? 'Edit Essential Bill' : 'Add New Essential Bill'}</DialogTitle>
-              </DialogHeader>
-              <BillForm 
-                initialData={editingBill} 
-                onSubmit={handleFormSubmit} 
-                isSubmitting={isSubmitting}
-              />
-            </DialogContent>
-          </Dialog>
-
-          {/* Filters */}
-          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-            {/* Search */}
-            <div className="relative w-full sm:w-48">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input 
-                placeholder="Search title/desc..." 
-                className="pl-9"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-
-            {/* Status Filter */}
-            <Select onValueChange={setFilterStatus} defaultValue="Pending">
-              <SelectTrigger className="w-full sm:w-[180px]">
-                <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
-                <SelectValue placeholder="Filter by Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="All">All Statuses</SelectItem>
-                {PaymentStatuses.map(status => (
-                  <SelectItem key={status} value={status}>{status}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </Card>
-
-        {/* Bill List */}
-        {filteredBills.length === 0 ? (
-          <div className="text-center p-10 text-muted-foreground border rounded-lg">
-            No bills found matching the current filter.
-          </div>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <AnimatePresence initial={false}>
-              {filteredBills.map((bill) => (
-                <BillItem 
-                  key={bill.id} 
-                  bill={bill} 
-                  onEdit={handleEdit} 
-                  onDelete={handleDelete} 
-                  onMarkPaid={handleMarkPaid}
-                />
-              ))}
-            </AnimatePresence>
-          </div>
-        )}
-        
-        {/* Analytics Placeholder */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Bill Analytics & Insights</CardTitle>
-            <CardDescription>Category-wise spending and trend analysis (Coming Soon).</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              Charts showing essential bills as a percentage of total family expenses will be displayed here.
-            </p>
-          </CardContent>
-        </Card>
+      {/* Summary Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <SummaryCard
+          title="Bills This Month"
+          value={formatCurrency(totalCurrentMonthBills)}
+          icon={DollarSign}
+          colorClass="text-blue-500"
+          delay={0.1}
+        />
+        <SummaryCard
+          title="Pending Bills"
+          value={pendingBills.length}
+          icon={Filter}
+          colorClass="text-yellow-500"
+          delay={0.2}
+        />
+        <SummaryCard
+          title="Overdue Bills"
+          value={overdueBills.length}
+          icon={AlertTriangle}
+          colorClass="text-destructive"
+          delay={0.3}
+        />
+        <SummaryCard
+          title="Monthly Trend"
+          value={`${billChangePercent.toFixed(1)}%`}
+          icon={trendIcon}
+          colorClass={trendColor}
+          delay={0.4}
+        />
       </div>
-    </DashboardLayout>
+
+      {/* Controls and Filters */}
+      <Card className="p-4 flex flex-col md:flex-row gap-4 justify-between items-center">
+        
+        {/* Add Button */}
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogTrigger asChild>
+            <Button onClick={handleAdd} className="w-full md:w-auto">
+              <Plus className="mr-2 h-4 w-4" /> Add New Bill
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>{editingBill ? 'Edit Essential Bill' : 'Add New Essential Bill'}</DialogTitle>
+            </DialogHeader>
+            <BillForm 
+              initialData={editingBill} 
+              onSubmit={handleFormSubmit} 
+              isSubmitting={isSubmitting}
+            />
+          </DialogContent>
+        </Dialog>
+
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+          {/* Search */}
+          <div className="relative w-full sm:w-48">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input 
+              placeholder="Search title/desc..." 
+              className="pl-9"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          {/* Status Filter */}
+          <Select onValueChange={setFilterStatus} defaultValue="Pending">
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
+              <SelectValue placeholder="Filter by Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="All">All Statuses</SelectItem>
+              {PaymentStatuses.map(status => (
+                <SelectItem key={status} value={status}>{status}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </Card>
+
+      {/* Bill List */}
+      {filteredBills.length === 0 ? (
+        <div className="text-center p-10 text-muted-foreground border rounded-lg">
+          No bills found matching the current filter.
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <AnimatePresence initial={false}>
+            {filteredBills.map((bill) => (
+              <BillItem 
+                key={bill.id} 
+                bill={bill} 
+                onEdit={handleEdit} 
+                onDelete={handleDelete} 
+                onMarkPaid={handleMarkPaid}
+              />
+            ))}
+          </AnimatePresence>
+        </div>
+      )}
+      
+      {/* Analytics Placeholder */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Bill Analytics & Insights</CardTitle>
+          <CardDescription>Category-wise spending and trend analysis (Coming Soon).</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">
+            Charts showing essential bills as a percentage of total family expenses will be displayed here.
+          </p>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

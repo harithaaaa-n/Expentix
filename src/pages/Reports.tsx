@@ -1,4 +1,3 @@
-import DashboardLayout from "@/components/DashboardLayout";
 import { useFinancialSummary } from "@/hooks/use-financial-summary";
 import { Loader2, FileText, FileJson, TrendingUp, TrendingDown, Pizza, PiggyBank } from "lucide-react";
 import { motion } from "framer-motion";
@@ -7,7 +6,7 @@ import ComparisonCard from "@/components/ComparisonCard";
 import TopCategoriesList from "@/components/TopCategoriesList";
 import BudgetUtilizationChart from "@/components/BudgetUtilizationChart";
 import InsightCard from "@/components/InsightCard";
-import CategoryPieChart from "@/components/CategoryPieChart"; // Added missing import
+import CategoryPieChart from "@/components/CategoryPieChart";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { showError, showSuccess } from "@/utils/toast";
@@ -20,7 +19,7 @@ const Reports = () => {
     topCategories,
     totalExpenses,
     budgetUsage,
-    categoryExpenses, // Added missing variable
+    categoryExpenses,
     isLoading: isFinancialLoading 
   } = useFinancialSummary();
 
@@ -88,77 +87,73 @@ const Reports = () => {
 
   if (isFinancialLoading) {
     return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center h-full">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      </DashboardLayout>
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
     );
   }
 
   return (
-    <DashboardLayout>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="space-y-6"
-      >
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold">Financial Reports</h1>
-            <p className="text-muted-foreground">Your detailed financial summary and insights.</p>
-          </div>
-          <div className="flex space-x-2 self-start md:self-center">
-            <Button variant="outline" onClick={() => handleExport('csv')}>
-              <FileJson className="h-4 w-4 mr-2" /> Export CSV
-            </Button>
-            <Button onClick={() => handleExport('pdf')}>
-              <FileText className="h-4 w-4 mr-2" /> Export PDF
-            </Button>
-          </div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-6"
+    >
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">Financial Reports</h1>
+          <p className="text-muted-foreground">Your detailed financial summary and insights.</p>
+        </div>
+        <div className="flex space-x-2 self-start md:self-center">
+          <Button variant="outline" onClick={() => handleExport('csv')}>
+            <FileJson className="h-4 w-4 mr-2" /> Export CSV
+          </Button>
+          <Button onClick={() => handleExport('pdf')}>
+            <FileText className="h-4 w-4 mr-2" /> Export PDF
+          </Button>
+        </div>
+      </div>
+
+      {/* Main Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column */}
+        <div className="lg:col-span-1 space-y-6">
+          <ComparisonCard data={comparison} />
+          <TopCategoriesList data={topCategories} totalExpenses={totalExpenses} />
         </div>
 
-        {/* Main Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column */}
-          <div className="lg:col-span-1 space-y-6">
-            <ComparisonCard data={comparison} />
-            <TopCategoriesList data={topCategories} totalExpenses={totalExpenses} />
+        {/* Right Column */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <BudgetUtilizationChart budgetUsage={budgetUsage} />
+              <CategoryPieChart data={categoryExpenses} />
           </div>
-
-          {/* Right Column */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <BudgetUtilizationChart budgetUsage={budgetUsage} />
-                <CategoryPieChart data={categoryExpenses} />
-            </div>
-            <MonthlyExpenseChart data={monthlyExpenses} />
-          </div>
+          <MonthlyExpenseChart data={monthlyExpenses} />
         </div>
+      </div>
 
-        {/* Smart Insights Section */}
-        <Card>
-            <CardHeader>
-                <CardTitle>💡 Smart Insights</CardTitle>
-                <CardContent className="p-0 pt-4">
-                    {insights.length > 0 ? (
-                        <div className="grid gap-4 md:grid-cols-2">
-                            {insights.map((insight, index) => (
-                                <InsightCard key={index} {...insight} />
-                            ))}
-                        </div>
-                    ) : (
-                        <p className="text-muted-foreground text-center p-4">
-                            Not enough data to generate insights yet. Keep tracking!
-                        </p>
-                    )}
-                </CardContent>
-            </CardHeader>
-        </Card>
+      {/* Smart Insights Section */}
+      <Card>
+          <CardHeader>
+              <CardTitle>💡 Smart Insights</CardTitle>
+              <CardContent className="p-0 pt-4">
+                  {insights.length > 0 ? (
+                      <div className="grid gap-4 md:grid-cols-2">
+                          {insights.map((insight, index) => (
+                              <InsightCard key={index} {...insight} />
+                          ))}
+                      </div>
+                  ) : (
+                      <p className="text-muted-foreground text-center p-4">
+                          Not enough data to generate insights yet. Keep tracking!
+                      </p>
+                  )}
+              </CardContent>
+          </CardHeader>
+      </Card>
 
-      </motion.div>
-    </DashboardLayout>
+    </motion.div>
   );
 };
 

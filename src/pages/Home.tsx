@@ -1,7 +1,7 @@
 import { useSession } from "@/integrations/supabase/session-context";
-import Dashboard from "./Dashboard";
 import Index from "./Index";
 import { Loader2 } from "lucide-react";
+import { Navigate } from "react-router-dom";
 
 const Home = () => {
   const { user, isLoading } = useSession();
@@ -14,7 +14,13 @@ const Home = () => {
     );
   }
 
-  return user ? <Dashboard /> : <Index />;
+  // If logged in, redirect to /dashboard
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  // If logged out, show landing page
+  return <Index />;
 };
 
 export default Home;
