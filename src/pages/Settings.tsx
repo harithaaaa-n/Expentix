@@ -1,7 +1,6 @@
 import ProfileForm from "@/components/ProfileForm";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import BudgetManager from "@/components/BudgetManager";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import AccountManagement from "@/components/AccountManagement";
 
 const Settings = () => {
