@@ -93,4 +93,24 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Smooth transitions for theme change */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      transition: 
+        color 0.3s ease, 
+        background-color 0.3s ease, 
+        border-color 0.3s ease, 
+        box-shadow 0.3s ease;
+    }
+    
+    /* Apply transitions to elements that change color/bg */
+    .bg-card, .bg-background, .text-foreground, .border-border, .shadow-lg {
+      transition: 
+        background-color 0.3s ease, 
+        color 0.3s ease, 
+        border-color 0.3s ease, 
+        box-shadow 0.3s ease;
+    }
+  }
 }
