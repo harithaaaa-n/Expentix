@@ -20,14 +20,14 @@ const SidebarContent = () => {
   return (
     <div className="flex flex-col gap-2 p-4 h-full">
       <div className="flex h-16 items-center px-2 mb-4">
-        <Link to="/" className="flex items-center gap-2">
-          <Wallet className="h-7 w-7 text-blue-600 dark:text-blue-400" />
-          <h1 className="text-xl font-bold text-primary">Expentix</h1>
+        <Link to="/" className="flex items-center gap-2 filter drop-shadow-[0_0_8px_rgba(58,134,255,0.4)]">
+          <Wallet className="h-8 w-8 text-sky-blue" />
+          <h1 className="text-2xl font-bold text-deep-slate dark:text-primary">Expentix</h1>
         </Link>
       </div>
       <nav className="grid gap-1 flex-grow">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.href;
+          const isActive = location.pathname.startsWith(item.href);
           return (
             <Link
               key={item.name}
@@ -35,7 +35,7 @@ const SidebarContent = () => {
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-200 text-base font-medium",
                 isActive
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-md shadow-sidebar-primary/30"
+                  ? "bg-gradient-to-r from-sky-blue to-lavender-violet text-white shadow-lg shadow-sky-blue/30"
                   : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
               )}
             >
@@ -56,11 +56,11 @@ export const Sidebar = () => {
     return (
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" className="md:hidden fixed top-3 left-3 z-40">
+          <Button variant="ghost" size="icon" className="md:hidden fixed top-3 left-3 z-40 bg-background/50 backdrop-blur-sm">
             <Menu className="h-6 w-6" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="p-0 w-64 flex flex-col bg-sidebar border-r-sidebar-border">
+        <SheetContent side="left" className="p-0 w-64 flex flex-col bg-sidebar/80 backdrop-blur-xl border-r-sidebar-border">
           <SidebarContent />
         </SheetContent>
       </Sheet>
@@ -68,7 +68,7 @@ export const Sidebar = () => {
   }
 
   return (
-    <div className="hidden md:flex flex-col h-screen w-64 border-r border-sidebar-border bg-sidebar fixed top-0 left-0">
+    <div className="hidden md:flex flex-col h-screen w-64 border-r border-sidebar-border/50 bg-sidebar/60 backdrop-blur-lg fixed top-0 left-0">
       <SidebarContent />
     </div>
   );
