@@ -8,10 +8,18 @@ import { ThemeToggle } from "./ThemeToggle";
 import { useNavigate } from "react-router-dom";
 import { useOwnerProfile } from "@/hooks/use-owner-profile";
 
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return { text: "Good Morning", icon: "☀️" };
+  if (hour < 18) return { text: "Good Afternoon", icon: "🌤️" };
+  return { text: "Good Evening", icon: "🌙" };
+};
+
 const Header = () => {
   const { user } = useSession();
   const { data: ownerProfileData } = useOwnerProfile();
   const navigate = useNavigate();
+  const greeting = getGreeting();
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -34,7 +42,7 @@ const Header = () => {
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-background/80 backdrop-blur-md px-4 md:px-6 md:ml-64">
       <div>
         <h1 className="text-xl font-semibold hidden md:block">
-          Good Evening, {greetingName} 🌙
+          {greeting.text}, {greetingName} {greeting.icon}
         </h1>
       </div>
       <div className="flex items-center gap-4">
