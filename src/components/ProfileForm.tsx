@@ -10,6 +10,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { showError, showSuccess } from '@/utils/toast';
 import { useSession } from '@/integrations/supabase/session-context';
 import AvatarUploader from './AvatarUploader';
+import { useTheme } from 'next-themes';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 // Define the schema for the profile form
 const ProfileSchema = z.object({
@@ -17,6 +19,7 @@ const ProfileSchema = z.object({
   last_name: z.string().max(50).optional(),
   avatar_url: z.string().url().optional().or(z.literal('')),
   profession: z.string().max(100).optional(),
+  theme: z.enum(["light", "dark", "system"]), // Added theme field
 });
 
 type ProfileFormValues = z.infer<typeof ProfileSchema>;
@@ -27,10 +30,12 @@ interface Profile {
   last_name: string | null;
   avatar_url: string | null;
   profession: string | null;
+  theme: "light" | "dark" | "system";
 }
 
 const ProfileForm: React.FC = () => {
   const { user, isLoading: isSessionLoading } = useSession();
+  const { setTheme } = useTheme();
   const [initialProfile, setInitialProfile] = useState<ProfileFormValues | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,6 +47,7 @@ const ProfileForm: React.FC = () => {
       last_name: '',
       avatar_url: '',
       profession: '',
+      theme: 'light', // Default theme
     },
   });
 
@@ -54,7 +60,7 @@ const ProfileForm: React.FC = () => {
     
     const { data, error } = await supabase
       .from('profiles')
-      .select('first_name, last_name, avatar_url, profession')
+      .select('first_name, last_name, avatar_url, profession, theme')
       .eq('id', user.id)
       .single();
 
@@ -66,9 +72,11 @@ const ProfileForm: React.FC = () => {
         last_name: data.last_name || '',
         avatar_url: data.avatar_url || '',
         profession: data.profession || '',
+        theme: data.theme || 'light',
       };
       setInitialProfile(profileData);
       form.reset(profileData);
+      setTheme(profileData.theme); // Apply theme on load
     }
     setIsLoading(false);
   };
@@ -100,11 +108,15 @@ const ProfileForm: React.FC = () => {
           last_name: data.last_name || null,
           avatar_url: data.avatar_url || null,
           profession: data.profession || null,
+          theme: data.theme, // Save theme preference
           updated_at: new Date().toISOString(),
         }, { onConflict: 'id' })
         .select();
 
       if (error) throw error;
+      
+      // Apply theme immediately after successful save
+      setTheme(data.theme);
       
       showSuccess('Profile updated successfully!');
       fetchProfile(); 
@@ -181,6 +193,30 @@ const ProfileForm: React.FC = () => {
               <FormControl>
                 <Input placeholder="Software Engineer, Teacher, etc." {...field} />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        {/* Theme Selector */}
+        <FormField
+          control={form.control}
+          name="theme"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Theme Preference</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select theme" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="light">Light</SelectItem>
+                  <SelectItem value="dark">Dark</SelectItem>
+                  <SelectItem value="system">System</SelectItem>
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
