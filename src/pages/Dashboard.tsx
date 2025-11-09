@@ -3,6 +3,8 @@ import SummaryCard from "@/components/SummaryCard";
 import MonthlyExpenseChart from "@/components/MonthlyExpenseChart";
 import CategoryPieChart from "@/components/CategoryPieChart";
 import RecentActivityTable from "@/components/RecentActivityTable";
+import DailyReminderBanner from "@/components/DailyReminderBanner";
+import SmartSuggestionBanner from "@/components/SmartSuggestionBanner";
 import { useSession } from "@/integrations/supabase/session-context";
 import { Loader2, DollarSign, Wallet, TrendingDown, Target } from "lucide-react";
 import { motion } from "framer-motion";
@@ -23,7 +25,7 @@ const Dashboard = () => {
     remainingBalance, 
     monthlyExpenses, 
     categoryExpenses, 
-    recentExpenses, // Added recentExpenses
+    recentExpenses,
     isLoading 
   } = useFinancialSummary();
 
@@ -48,6 +50,10 @@ const Dashboard = () => {
         <h1 className="text-3xl font-bold mb-4">
           Welcome back, {user?.email?.split('@')[0]} 👋
         </h1>
+        
+        {/* Daily Reminder and Smart Suggestions */}
+        <DailyReminderBanner />
+        <SmartSuggestionBanner />
         
         {/* Summary Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
