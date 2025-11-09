@@ -1,0 +1,2 @@
+# Expentix
+Expentix is a modern, lifestyle-based family expense tracker designed to help you spend smarter and live better. It combines mindful insights, interactive analytics, and a stunning glassmorphic UI. Track habits, set goals, and discover balance — all in one intuitive dashboard. 💸✨
