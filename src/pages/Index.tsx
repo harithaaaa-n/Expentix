@@ -21,7 +21,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-x-hidden">
+    <div className="flex flex-col relative overflow-x-hidden">
       {/* Background Gradient Container */}
       <div className="fixed inset-0 -z-10 bg-gradient-to-tr from-mint-green/30 via-aqua-blue/30 to-lavender-violet/30 dark:from-deep-slate dark:via-gray-900 dark:to-deep-slate">
         {/* Floating Orbs / Blurred Shapes */}

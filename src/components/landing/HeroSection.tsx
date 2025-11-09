@@ -24,7 +24,7 @@ const itemVariants: Variants = {
 
 const HeroSection: React.FC = () => {
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden py-24 px-4 md:px-8">
+    <section id="home" className="relative min-h-[80vh] flex items-center justify-center overflow-hidden py-24 px-4 md:px-8">
       <div className="relative z-10 max-w-6xl w-full grid md:grid-cols-2 gap-12 items-center">
         {/* Left Content */}
         <motion.div
