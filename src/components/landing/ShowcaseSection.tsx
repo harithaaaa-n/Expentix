@@ -1,37 +1,37 @@
 import React from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DollarSign, TrendingUp, TrendingDown, Wallet } from 'lucide-react';
+import { TrendingUp, TrendingDown, Wallet } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const DashboardMockup: React.FC = () => {
   return (
-    <div className="w-full h-full p-6 bg-card rounded-xl shadow-2xl border border-border/50">
+    <div className="w-full h-full p-6 bg-white/30 dark:bg-gray-900/30 rounded-xl shadow-2xl border border-white/50 backdrop-blur-lg">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-semibold">Monthly Overview</h3>
-        <Wallet className="h-6 w-6 text-primary" />
+        <h3 className="text-xl font-semibold text-deep-slate dark:text-white">Monthly Overview</h3>
+        <Wallet className="h-6 w-6 text-sky-blue" />
       </div>
       <div className="grid grid-cols-2 gap-4">
-        <Card className="bg-green-500/10 border-green-500/30">
+        <Card className="bg-white/50 dark:bg-gray-800/50 border-green-500/50 backdrop-blur-sm">
           <CardHeader className="p-3 flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-sm font-medium text-green-600 dark:text-green-400">Income</CardTitle>
             <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
           </CardHeader>
           <CardContent className="p-3 pt-0">
-            <div className="text-xl font-bold">₹85,000</div>
+            <div className="text-xl font-bold text-deep-slate dark:text-white">₹85,000</div>
           </CardContent>
         </Card>
-        <Card className="bg-red-500/10 border-red-500/30">
+        <Card className="bg-white/50 dark:bg-gray-800/50 border-red-500/50 backdrop-blur-sm">
           <CardHeader className="p-3 flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-sm font-medium text-destructive">Expenses</CardTitle>
             <TrendingDown className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent className="p-3 pt-0">
-            <div className="text-xl font-bold">₹42,500</div>
+            <div className="text-xl font-bold text-deep-slate dark:text-white">₹42,500</div>
           </CardContent>
         </Card>
       </div>
-      <div className="mt-4 h-32 bg-muted rounded-lg flex items-center justify-center text-muted-foreground">
+      <div className="mt-4 h-32 bg-white/50 dark:bg-gray-800/50 rounded-lg flex items-center justify-center text-muted-grey-blue dark:text-muted-foreground backdrop-blur-sm">
         Interactive Chart Placeholder
       </div>
     </div>
@@ -50,7 +50,7 @@ const ShowcaseSection: React.FC = () => {
   const opacity = useTransform(scrollYProgress, [0.2, 0.5, 0.7, 1], [0, 1, 1, 0]);
 
   return (
-    <section ref={targetRef} id="reports" className="py-32 px-4 md:px-8 bg-background overflow-hidden">
+    <section ref={targetRef} id="reports" className="py-32 px-4 md:px-8 relative z-10">
       <div className="max-w-6xl mx-auto text-center space-y-16">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -58,10 +58,10 @@ const ShowcaseSection: React.FC = () => {
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-primary">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-deep-slate dark:text-primary">
             Your data. Your design. Your peace of mind.
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-xl text-muted-grey-blue dark:text-muted-foreground max-w-3xl mx-auto">
             Experience financial clarity through a beautifully designed, interactive interface.
           </p>
         </motion.div>

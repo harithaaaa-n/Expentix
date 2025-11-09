@@ -19,8 +19,8 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon: Icon, title, descriptio
       transition={{ duration: 0.6 }}
       whileHover={{ scale: 1.03, boxShadow: `0 10px 30px ${color}40` }}
       className={cn(
-        "rounded-xl backdrop-blur-sm transition-all duration-300",
-        "bg-white/50 dark:bg-gray-900/50 border border-white/30 dark:border-gray-700/50 shadow-lg"
+        "rounded-xl transition-all duration-300 h-full",
+        "bg-white/20 dark:bg-gray-900/20 border border-white/30 dark:border-gray-700/50 shadow-lg backdrop-blur-md" // Glassmorphic effect
       )}
     >
       <Card className="bg-transparent border-none shadow-none p-6 h-full">
@@ -28,10 +28,10 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon: Icon, title, descriptio
           <div className={cn("p-3 rounded-full w-fit", color)}>
             <Icon className="h-6 w-6 text-white" />
           </div>
-          <CardTitle className="mt-3 text-xl font-bold">{title}</CardTitle>
+          <CardTitle className="mt-3 text-xl font-bold text-deep-slate dark:text-white">{title}</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <p className="text-muted-foreground">{description}</p>
+          <p className="text-muted-grey-blue dark:text-muted-foreground">{description}</p>
         </CardContent>
       </Card>
     </motion.div>

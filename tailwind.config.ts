@@ -62,6 +62,14 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // New Landing Page Colors
+        'mint-green': '#4ADE80',
+        'aqua-blue': '#67E8F9',
+        'sky-blue': '#3A86FF',
+        'lavender-violet': '#A78BFA',
+        'lime-glow': '#A3E635',
+        'deep-slate': '#0F172A',
+        'muted-grey-blue': '#334155',
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -77,10 +85,17 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        float: { // Custom float animation
+          '0%, 100%': { transform: 'translate(0, 0) rotate(0deg)' },
+          '25%': { transform: 'translate(10px, -10px) rotate(5deg)' },
+          '50%': { transform: 'translate(0, 0) rotate(0deg)' },
+          '75%': { transform: 'translate(-10px, 10px) rotate(-5deg)' },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        float: 'float 15s ease-in-out infinite', // Use the custom float animation
       },
     },
   },

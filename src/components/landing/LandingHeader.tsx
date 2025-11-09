@@ -5,6 +5,7 @@ import { Menu, Wallet } from 'lucide-react';
 import { useSession } from '@/integrations/supabase/session-context';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { cn } from '@/lib/utils';
 
 const navLinks = [
   { name: 'Home', href: '#home' },
@@ -18,10 +19,10 @@ const NavItems: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => (
     {navLinks.map(link => (
       isMobile ? (
         <SheetClose asChild key={link.name}>
-          <a href={link.href} className="hover:text-indigo-600 text-lg">{link.name}</a>
+          <a href={link.href} className="hover:text-sky-blue text-lg text-deep-slate dark:text-white">{link.name}</a>
         </SheetClose>
       ) : (
-        <a key={link.name} href={link.href} className="hover:text-indigo-600">{link.name}</a>
+        <a key={link.name} href={link.href} className="hover:text-sky-blue text-muted-grey-blue dark:text-muted-foreground">{link.name}</a>
       )
     ))}
   </>
@@ -33,7 +34,12 @@ const ActionButton: React.FC<{ user: any, isMobile?: boolean }> = ({ user, isMob
 
   const button = (
     <Link to={buttonLink}>
-      <Button className="bg-gradient-to-r from-indigo-500 to-sky-500 text-white px-5 py-2 rounded-xl hover:scale-105 transition">
+      <Button 
+        className={cn(
+          "bg-gradient-to-r from-sky-blue to-mint-green text-white px-5 py-2 rounded-xl hover:scale-105 transition shadow-md shadow-sky-blue/30",
+          isMobile && "w-full"
+        )}
+      >
         {buttonContent}
       </Button>
     </Link>
@@ -44,10 +50,10 @@ const ActionButton: React.FC<{ user: any, isMobile?: boolean }> = ({ user, isMob
 
 const TextLogo: React.FC = () => (
   <div className="flex items-center gap-2">
-    <Wallet className="h-8 w-8 text-indigo-600" />
+    <Wallet className="h-8 w-8 text-sky-blue" />
     <div>
-      <h1 className="text-xl font-bold text-primary">Expentix</h1>
-      <p className="text-xs text-muted-foreground">Track Smarter. Spend Wiser.</p>
+      <h1 className="text-xl font-bold text-deep-slate dark:text-primary">Expentix</h1>
+      <p className="text-xs text-muted-grey-blue dark:text-muted-foreground">Track Smarter. Spend Wiser.</p>
     </div>
   </div>
 );
@@ -57,7 +63,10 @@ const LandingHeader: React.FC = () => {
   const isMobile = useIsMobile();
 
   return (
-    <header className="sticky top-0 z-50 bg-white/40 backdrop-blur-md shadow-[0_2px_15px_rgba(0,0,0,0.05)] flex items-center justify-between px-8 py-4">
+    <header className={cn(
+      "sticky top-0 z-50 flex items-center justify-between px-8 py-4 transition-colors duration-300",
+      "bg-white/20 dark:bg-gray-900/20 backdrop-blur-lg shadow-[0_2px_15px_rgba(0,0,0,0.05)] border-b border-white/30 dark:border-gray-700/50"
+    )}>
       <div className="flex items-center gap-2">
         <Link to="/">
           <TextLogo />
@@ -65,7 +74,7 @@ const LandingHeader: React.FC = () => {
       </div>
 
       {/* Desktop Navigation */}
-      <nav className="hidden md:flex items-center gap-6 text-muted-foreground font-medium">
+      <nav className="hidden md:flex items-center gap-6 font-medium">
         <NavItems />
         <ActionButton user={user} />
       </nav>
@@ -75,11 +84,11 @@ const LandingHeader: React.FC = () => {
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon">
-              <Menu className="h-6 w-6" />
+              <Menu className="h-6 w-6 text-deep-slate dark:text-white" />
             </Button>
           </SheetTrigger>
-          <SheetContent>
-            <nav className="flex flex-col items-center gap-8 text-muted-foreground font-medium mt-16">
+          <SheetContent className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border-l border-white/30 dark:border-gray-700/50">
+            <nav className="flex flex-col items-center gap-8 font-medium mt-16">
               <NavItems isMobile />
               <ActionButton user={user} isMobile />
             </nav>
