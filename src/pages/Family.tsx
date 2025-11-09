@@ -17,6 +17,7 @@ import { useFinancialSummary } from "@/hooks/use-financial-summary";
 import CategoryPieChart from "@/components/CategoryPieChart";
 import MonthlyExpenseChart from "@/components/MonthlyExpenseChart";
 import { BarChart } from "recharts";
+import LeaderboardCard from "@/components/LeaderboardCard"; // Import the new component
 
 // Placeholder for Member Expense Comparison Chart
 const MemberExpenseComparisonChart: React.FC<{ members: FamilyMember[], ownerId: string, ownerName: string }> = ({ members, ownerId, ownerName }) => {
@@ -265,6 +266,9 @@ const FamilyPage = () => {
           </CardContent>
         </Card>
 
+        {/* Monthly Leaderboard */}
+        <LeaderboardCard />
+
         {/* Family Member Management List */}
         <FamilyMemberList 
           members={members} 
@@ -273,24 +277,6 @@ const FamilyPage = () => {
           onDelete={handleDelete} 
         />
 
-        {/* Placeholder for Leaderboard */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Trophy className="mr-2 h-5 w-5 text-yellow-500" />
-              Monthly Leaderboard
-            </CardTitle>
-            <CardDescription>
-              A fun way to encourage good financial habits. Coming soon!
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              See who is the "Top Saver" or "Most Diligent Tracker" for the month.
-            </p>
-          </CardContent>
-        </Card>
-        
         {/* Placeholder for Activity Feed */}
         <Card>
           <CardHeader>
