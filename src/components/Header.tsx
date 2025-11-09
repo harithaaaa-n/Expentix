@@ -5,16 +5,19 @@ import { LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { showError, showSuccess } from "@/utils/toast";
 import { ThemeToggle } from "./ThemeToggle";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const { user } = useSession();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
       showError("Failed to log out: " + error.message);
     } else {
-      showSuccess("Logged out successfully!");
+      showSuccess("Logged out successfully! Redirecting...");
+      navigate('/');
     }
   };
 

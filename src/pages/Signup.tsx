@@ -18,7 +18,7 @@ const Signup = () => {
   }
 
   if (user) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return (
@@ -59,7 +59,7 @@ const Signup = () => {
           }}
           theme="light"
           view="sign_up"
-          redirectTo={window.location.origin + '/dashboard'}
+          redirectTo={window.location.origin + '/'}
         />
       </motion.div>
     </div>

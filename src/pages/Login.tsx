@@ -18,7 +18,7 @@ const Login = () => {
   }
 
   if (user) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return (
@@ -59,7 +59,7 @@ const Login = () => {
           }}
           theme="light"
           view="sign_in"
-          redirectTo={window.location.origin + '/dashboard'}
+          redirectTo={window.location.origin + '/'}
         />
       </motion.div>
     </div>
