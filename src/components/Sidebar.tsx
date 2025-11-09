@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, DollarSign, TrendingUp, BarChart3, Users, Settings, Menu, Zap } from "lucide-react";
+import { Home, DollarSign, TrendingUp, BarChart3, Users, Settings, Menu, Zap, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -20,8 +20,9 @@ const SidebarContent = () => {
   return (
     <div className="flex flex-col gap-2 p-4 h-full">
       <div className="flex h-16 items-center px-4">
-        <Link to="/" className="flex items-center">
-          <img src="/Gemini_Generated_Image_4yfve64yfve64yfv.png" alt="Expentix Logo" className="h-10" />
+        <Link to="/" className="flex items-center gap-2">
+          <Wallet className="h-6 w-6 text-indigo-600" />
+          <h1 className="text-lg font-bold text-primary">Expentix</h1>
         </Link>
       </div>
       <nav className="grid gap-1 flex-grow">

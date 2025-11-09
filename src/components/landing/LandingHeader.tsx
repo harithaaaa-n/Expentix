@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu } from 'lucide-react';
+import { Menu, Wallet } from 'lucide-react';
 import { useSession } from '@/integrations/supabase/session-context';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -42,6 +42,16 @@ const ActionButton: React.FC<{ user: any, isMobile?: boolean }> = ({ user, isMob
   return isMobile ? <SheetClose asChild>{button}</SheetClose> : button;
 };
 
+const TextLogo: React.FC = () => (
+  <div className="flex items-center gap-2">
+    <Wallet className="h-8 w-8 text-indigo-600" />
+    <div>
+      <h1 className="text-xl font-bold text-primary">Expentix</h1>
+      <p className="text-xs text-muted-foreground">Track Smarter. Spend Wiser.</p>
+    </div>
+  </div>
+);
+
 const LandingHeader: React.FC = () => {
   const { user } = useSession();
   const isMobile = useIsMobile();
@@ -50,11 +60,7 @@ const LandingHeader: React.FC = () => {
     <header className="sticky top-0 z-50 bg-white/40 backdrop-blur-md shadow-[0_2px_15px_rgba(0,0,0,0.05)] flex items-center justify-between px-8 py-4">
       <div className="flex items-center gap-2">
         <Link to="/">
-          <img
-            src="/Gemini_Generated_Image_4yfve64yfve64yfv.png"
-            alt="Expentix Logo"
-            className="h-12 md:h-14 hover:scale-105 transition-transform duration-300"
-          />
+          <TextLogo />
         </Link>
       </div>
 
