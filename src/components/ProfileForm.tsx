@@ -9,12 +9,14 @@ import { Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { showError, showSuccess } from '@/utils/toast';
 import { useSession } from '@/integrations/supabase/session-context';
+import AvatarUploader from './AvatarUploader';
 
 // Define the schema for the profile form
 const ProfileSchema = z.object({
   first_name: z.string().max(50).optional(),
   last_name: z.string().max(50).optional(),
   avatar_url: z.string().url().optional().or(z.literal('')),
+  profession: z.string().max(100).optional(),
 });
 
 type ProfileFormValues = z.infer<typeof ProfileSchema>;
@@ -24,6 +26,7 @@ interface Profile {
   first_name: string | null;
   last_name: string | null;
   avatar_url: string | null;
+  profession: string | null;
 }
 
 const ProfileForm: React.FC = () => {
@@ -38,8 +41,12 @@ const ProfileForm: React.FC = () => {
       first_name: '',
       last_name: '',
       avatar_url: '',
+      profession: '',
     },
   });
+
+  const { setValue, watch } = form;
+  const avatarUrl = watch('avatar_url');
 
   const fetchProfile = async () => {
     if (!user) return;
@@ -47,7 +54,7 @@ const ProfileForm: React.FC = () => {
     
     const { data, error } = await supabase
       .from('profiles')
-      .select('first_name, last_name, avatar_url')
+      .select('first_name, last_name, avatar_url, profession')
       .eq('id', user.id)
       .single();
 
@@ -58,6 +65,7 @@ const ProfileForm: React.FC = () => {
         first_name: data.first_name || '',
         last_name: data.last_name || '',
         avatar_url: data.avatar_url || '',
+        profession: data.profession || '',
       };
       setInitialProfile(profileData);
       form.reset(profileData);
@@ -71,6 +79,14 @@ const ProfileForm: React.FC = () => {
     }
   }, [user, isSessionLoading]);
 
+  const handleAvatarUpload = (url: string) => {
+    setValue('avatar_url', url, { shouldValidate: true });
+  };
+
+  const handleAvatarRemove = () => {
+    setValue('avatar_url', '', { shouldValidate: true });
+  };
+
   const onSubmit = async (data: ProfileFormValues) => {
     if (!user) return;
     setIsSubmitting(true);
@@ -83,6 +99,7 @@ const ProfileForm: React.FC = () => {
           first_name: data.first_name || null,
           last_name: data.last_name || null,
           avatar_url: data.avatar_url || null,
+          profession: data.profession || null,
           updated_at: new Date().toISOString(),
         }, { onConflict: 'id' })
         .select();
@@ -109,6 +126,14 @@ const ProfileForm: React.FC = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-w-lg">
+        
+        <AvatarUploader 
+          initialUrl={avatarUrl || null}
+          onUploadSuccess={handleAvatarUpload}
+          onRemove={handleAvatarRemove}
+          disabled={isSubmitting}
+        />
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* First Name */}
           <FormField
@@ -140,16 +165,16 @@ const ProfileForm: React.FC = () => {
             )}
           />
         </div>
-
-        {/* Avatar URL */}
+        
+        {/* Profession */}
         <FormField
           control={form.control}
-          name="avatar_url"
+          name="profession"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Avatar URL (Optional)</FormLabel>
+              <FormLabel>Profession (Optional)</FormLabel>
               <FormControl>
-                <Input placeholder="https://example.com/avatar.jpg" {...field} />
+                <Input placeholder="Software Engineer, Teacher, etc." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -7,7 +7,7 @@ interface Profile {
   first_name: string | null;
   last_name: string | null;
   avatar_url: string | null;
-  theme: 'light' | 'dark' | 'system' | null;
+  profession: string | null;
 }
 
 export const useOwnerProfile = () => {
@@ -20,7 +20,7 @@ export const useOwnerProfile = () => {
 
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, first_name, last_name, avatar_url, theme')
+        .select('id, first_name, last_name, avatar_url, profession')
         .eq('id', user.id)
         .single();
 
