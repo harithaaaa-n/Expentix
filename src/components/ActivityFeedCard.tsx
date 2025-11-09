@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Activity, TrendingUp, TrendingDown, Clock } from 'lucide-react';
+import { Activity, TrendingUp, TrendingDown, Clock, Loader2 } from 'lucide-react';
 import { useRealtimeActivity } from '@/hooks/use-realtime-activity';
 import { FamilyMember } from '@/types/settings';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,7 +13,7 @@ interface ActivityFeedCardProps {
 const ActivityFeedCard: React.FC<ActivityFeedCardProps> = ({ members }) => {
   // Map members to the format required by the hook (id and name)
   const memberMap = members.map(m => ({ id: m.id!, name: m.name }));
-  const { activityFeed } = useRealtimeActivity(memberMap);
+  const { activityFeed, isInitialLoad } = useRealtimeActivity(memberMap);
 
   return (
     <Card>
@@ -27,7 +27,11 @@ const ActivityFeedCard: React.FC<ActivityFeedCardProps> = ({ members }) => {
         </CardDescription>
       </CardHeader>
       <CardContent className="p-0">
-        {activityFeed.length === 0 ? (
+        {isInitialLoad ? (
+          <div className="flex justify-center py-6">
+            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          </div>
+        ) : activityFeed.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center p-6">
             No recent activity yet. Log an expense or income to see the feed update!
           </p>
