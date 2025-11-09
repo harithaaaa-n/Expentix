@@ -14,7 +14,7 @@ const Settings = () => {
         <CardHeader>
           <CardTitle>Profile Information</CardTitle>
           <CardDescription>
-            Update your personal details here.
+            Update your personal details and theme preference here.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -24,22 +24,6 @@ const Settings = () => {
 
       {/* Monthly Budget Setup */}
       <BudgetManager />
-
-      {/* Theme Toggle */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Appearance</CardTitle>
-          <CardDescription>
-            Toggle between light and dark themes.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium">Current Theme</p>
-            <ThemeToggle />
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Account Management */}
       <AccountManagement />
