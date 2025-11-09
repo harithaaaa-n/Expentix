@@ -26,6 +26,10 @@ const Header = () => {
   const userInitials = ownerProfileData?.ownerName ? ownerProfileData.ownerName.substring(0, 2).toUpperCase() : 'U';
   const greetingName = ownerProfileData?.ownerName || user?.email?.split('@')[0];
 
+  const handleProfileClick = () => {
+    navigate('/settings');
+  };
+
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-background/80 backdrop-blur-md px-4 md:px-6 md:ml-64">
       <div>
@@ -35,10 +39,23 @@ const Header = () => {
       </div>
       <div className="flex items-center gap-4">
         <ThemeToggle />
-        <Avatar className="h-9 w-9">
-          <AvatarImage src={ownerProfileData?.profile?.avatar_url || ''} alt={user?.email} />
-          <AvatarFallback>{userInitials}</AvatarFallback>
-        </Avatar>
+        
+        {/* Profile Clickable Area */}
+        <div 
+          className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={handleProfileClick}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') handleProfileClick();
+          }}
+        >
+          <Avatar className="h-9 w-9">
+            <AvatarImage src={ownerProfileData?.profile?.avatar_url || ''} alt={user?.email} />
+            <AvatarFallback>{userInitials}</AvatarFallback>
+          </Avatar>
+        </div>
+        
         <Button variant="ghost" size="icon" onClick={handleLogout} title="Logout">
           <LogOut className="h-5 w-5 text-destructive" />
         </Button>
