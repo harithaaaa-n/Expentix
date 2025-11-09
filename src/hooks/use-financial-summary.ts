@@ -35,7 +35,8 @@ interface FinancialSummary {
   totalExpenses: number;
   remainingBalance: number;
   monthlyExpenses: MonthlyExpenseData[];
-  categoryExpenses: CategoryExpenseData[];
+  categoryExpenses: CategoryExpenseData[]; // All-time category breakdown
+  currentMonthCategoryExpenses: CategoryExpenseData[]; // Current month category breakdown
   comparison: ComparisonData;
   budgetUsage: BudgetUsage[];
   topCategories: CategoryExpenseData[];
@@ -106,6 +107,7 @@ const useFinancialSummary = (targetUserId?: string | null, memberId?: string | n
       remainingBalance: 0,
       monthlyExpenses: [],
       categoryExpenses: [],
+      currentMonthCategoryExpenses: [],
       comparison: { currentMonthExpenses: 0, lastMonthExpenses: 0, expenseDifference: 0, expenseChangePercent: 0 },
       budgetUsage: [],
       topCategories: [],
@@ -121,8 +123,8 @@ const useFinancialSummary = (targetUserId?: string | null, memberId?: string | n
     const remainingBalance = totalIncome - totalExpenses;
 
     const monthlyMap = new Map<string, number>();
-    const categoryMap = new Map<string, number>();
-    const categorySpentThisMonthMap = new Map<string, number>();
+    const categoryMap = new Map<string, number>(); // All-time
+    const categorySpentThisMonthMap = new Map<string, number>(); // Current Month
 
     const now = new Date();
     const currentMonthStart = startOfMonth(now);
@@ -172,7 +174,10 @@ const useFinancialSummary = (targetUserId?: string | null, memberId?: string | n
     });
 
     const categoryExpenses = Array.from(categoryMap.entries()).map(([name, value]) => ({ name, value }));
-    const topCategories = [...categoryExpenses].sort((a, b) => b.value - a.value);
+    const currentMonthCategoryExpenses = Array.from(categorySpentThisMonthMap.entries()).map(([name, value]) => ({ name, value }));
+    
+    // Top categories should be based on current month spending for dashboard relevance
+    const topCategories = [...currentMonthCategoryExpenses].sort((a, b) => b.value - a.value);
     
     // Only show the last 6 months in the chart
     const sortedMonthlyKeys = Array.from(monthlyMap.keys()).sort((a, b) => {
@@ -194,6 +199,7 @@ const useFinancialSummary = (targetUserId?: string | null, memberId?: string | n
       remainingBalance,
       monthlyExpenses,
       categoryExpenses,
+      currentMonthCategoryExpenses,
       comparison,
       budgetUsage,
       topCategories,

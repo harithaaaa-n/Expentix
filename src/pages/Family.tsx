@@ -48,7 +48,12 @@ const MemberExpenseComparisonChart: React.FC<{ members: FamilyMember[], ownerId:
 const FamilyPage = () => {
   const { user } = useSession();
   const { data: ownerProfileData, isLoading: isProfileLoading } = useOwnerProfile();
-  const { refetch: refetchSummary } = useFinancialSummary(); // Hook to trigger refetch of overall summary
+  
+  // Fetch combined summary for the whole family (memberId is undefined)
+  const { 
+    currentMonthCategoryExpenses, 
+    refetch: refetchSummary 
+  } = useFinancialSummary(); 
 
   const [members, setMembers] = useState<FamilyMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -257,10 +262,8 @@ const FamilyPage = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-6 lg:grid-cols-2">
-            {/* Placeholder for Combined Category Pie Chart */}
-            <Card className="h-[350px] flex items-center justify-center bg-muted/50">
-              <p className="text-muted-foreground">Combined Category Pie Chart (Coming Soon)</p>
-            </Card>
+            {/* Combined Category Pie Chart */}
+            <CategoryPieChart data={currentMonthCategoryExpenses} />
             
             {/* Member Expense Comparison Bar Chart */}
             <MemberExpenseComparisonChart members={members} ownerId={ownerId} ownerName={ownerName} />
