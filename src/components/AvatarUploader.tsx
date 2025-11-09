@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Loader2, Upload, User, X, RefreshCw } from 'lucide-react';
+import { Loader2, Upload, X, RefreshCw } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 import { useSession } from '@/integrations/supabase/session-context';
 
@@ -11,12 +11,21 @@ interface AvatarUploaderProps {
   initialUrl: string | null;
   onUploadSuccess: (url: string) => void;
   onRemove: () => void;
+  uploadPath: string; // e.g., 'profile' or 'family_members/uuid'
+  fallbackText?: string;
   disabled?: boolean;
 }
 
 const BUCKET_NAME = 'avatars';
 
-const AvatarUploader: React.FC<AvatarUploaderProps> = ({ initialUrl, onUploadSuccess, onRemove, disabled = false }) => {
+const AvatarUploader: React.FC<AvatarUploaderProps> = ({ 
+  initialUrl, 
+  onUploadSuccess, 
+  onRemove, 
+  uploadPath,
+  fallbackText = 'U',
+  disabled = false 
+}) => {
   const { user } = useSession();
   const [uploading, setUploading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(initialUrl);
@@ -39,19 +48,18 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ initialUrl, onUploadSuc
     setUploading(true);
 
     try {
-      // 1. Delete old avatar if it exists (optional, but good practice for cleanup)
+      // 1. Delete old avatar if it exists
       if (avatarUrl) {
         const path = avatarUrl.split(`${BUCKET_NAME}/`)[1];
         if (path) {
-          // We don't wait for deletion error, as the file might not exist or path might be complex
           supabase.storage.from(BUCKET_NAME).remove([path]);
         }
       }
 
-      // 2. Upload new file
+      // 2. Upload new file with a structured path
       const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `${user.id}/${uploadPath}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from(BUCKET_NAME)
@@ -83,7 +91,7 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ initialUrl, onUploadSuc
     } finally {
       setUploading(false);
     }
-  }, [user, avatarUrl, onUploadSuccess]);
+  }, [user, avatarUrl, onUploadSuccess, uploadPath]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -95,11 +103,9 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ initialUrl, onUploadSuc
   const handleRemove = () => {
     if (!user) return;
     
-    // Clear URL in state and parent form
     setAvatarUrl(null);
     onRemove();
     
-    // Attempt to delete file from storage
     if (initialUrl) {
       const path = initialUrl.split(`${BUCKET_NAME}/`)[1];
       if (path) {
@@ -109,16 +115,13 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ initialUrl, onUploadSuc
       }
     }
   };
-  
-  const getInitials = (name: string) => name.split(' ').map(n => n[0]).join('').toUpperCase();
-  const fallbackText = user?.email ? getInitials(user.email.split('@')[0]) : 'U';
 
   return (
     <div className="space-y-3">
-      <label className="text-sm font-medium leading-none">Profile Photo</label>
+      <label className="text-sm font-medium leading-none">Photo</label>
       <div className="flex items-center space-x-4">
         <Avatar className="h-20 w-20 border-2 border-primary/50">
-          <AvatarImage src={avatarUrl || ''} alt="User Avatar" />
+          <AvatarImage src={avatarUrl || ''} alt="Avatar" />
           <AvatarFallback className="bg-primary text-primary-foreground text-xl">
             {fallbackText}
           </AvatarFallback>
@@ -135,7 +138,7 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ initialUrl, onUploadSuc
                 disabled={disabled || uploading}
                 className="flex-1"
               >
-                <X className="h-4 w-4 mr-2" /> Remove Photo
+                <X className="h-4 w-4 mr-2" /> Remove
               </Button>
               <label htmlFor="avatar-upload-change" className="flex-1">
                 <Button 
@@ -145,54 +148,22 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ initialUrl, onUploadSuc
                   disabled={disabled || uploading}
                   className="w-full"
                 >
-                  {uploading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <>
-                      <RefreshCw className="h-4 w-4 mr-2" /> Change Photo
-                    </>
-                  )}
+                  {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <><RefreshCw className="h-4 w-4 mr-2" /> Change</>}
                 </Button>
-                <Input 
-                  id="avatar-upload-change" 
-                  type="file" 
-                  accept="image/*" 
-                  onChange={handleFileChange} 
-                  className="hidden"
-                  disabled={disabled || uploading}
-                />
+                <Input id="avatar-upload-change" type="file" accept="image/*" onChange={handleFileChange} className="hidden" disabled={disabled || uploading} />
               </label>
             </div>
           ) : (
             <label htmlFor="avatar-upload" className="w-full">
-              <Button 
-                type="button" 
-                variant="default" 
-                size="sm" 
-                disabled={disabled || uploading}
-                className="w-full"
-              >
-                {uploading ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <>
-                    <Upload className="h-4 w-4 mr-2" /> Upload Photo
-                  </>
-                )}
+              <Button type="button" variant="default" size="sm" disabled={disabled || uploading} className="w-full">
+                {uploading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <><Upload className="h-4 w-4 mr-2" /> Upload</>}
               </Button>
-              <Input 
-                id="avatar-upload" 
-                type="file" 
-                accept="image/*" 
-                onChange={handleFileChange} 
-                className="hidden"
-                disabled={disabled || uploading}
-              />
+              <Input id="avatar-upload" type="file" accept="image/*" onChange={handleFileChange} className="hidden" disabled={disabled || uploading} />
             </label>
           )}
         </div>
       </div>
-      <p className="text-xs text-muted-foreground">Max file size: 2MB. Recommended format: JPEG/PNG.</p>
+      <p className="text-xs text-muted-foreground">Max file size: 2MB. Recommended: JPEG/PNG.</p>
     </div>
   );
 };

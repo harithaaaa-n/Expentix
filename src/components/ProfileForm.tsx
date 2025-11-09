@@ -123,6 +123,9 @@ const ProfileForm: React.FC = () => {
     );
   }
 
+  const getInitials = (name: string) => name.split(' ').map(n => n[0]).join('').toUpperCase();
+  const fallbackText = user?.email ? getInitials(user.email.split('@')[0]) : 'U';
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-w-lg">
@@ -132,6 +135,8 @@ const ProfileForm: React.FC = () => {
           onUploadSuccess={handleAvatarUpload}
           onRemove={handleAvatarRemove}
           disabled={isSubmitting}
+          uploadPath="profile"
+          fallbackText={fallbackText}
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

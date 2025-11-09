@@ -11,8 +11,10 @@ import { Loader2, Plus, Trash2, Edit, Share2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/integrations/supabase/session-context';
 import { showError, showSuccess } from '@/utils/toast';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import AvatarUploader from './AvatarUploader';
+import { v4 as uuidv4 } from 'uuid';
 
 // --- Form Component ---
 interface FamilyMemberFormProps {
@@ -25,6 +27,7 @@ export const MemberForm: React.FC<FamilyMemberFormProps> = ({ initialData, onSub
   const form = useForm<FamilyMemberFormValues>({
     resolver: zodResolver(FamilyMemberSchema),
     defaultValues: initialData || {
+      id: uuidv4(), // Pre-generate ID for new members
       name: '',
       relation: '',
       email: '',
@@ -32,15 +35,35 @@ export const MemberForm: React.FC<FamilyMemberFormProps> = ({ initialData, onSub
     },
   });
 
+  const { setValue, watch } = form;
+  const avatarUrl = watch('avatar_url');
+  const memberId = watch('id');
+
   useEffect(() => {
     if (initialData) {
       form.reset(initialData);
     }
   }, [initialData, form.reset]);
 
+  const handleAvatarUpload = (url: string) => {
+    setValue('avatar_url', url, { shouldValidate: true });
+  };
+
+  const handleAvatarRemove = () => {
+    setValue('avatar_url', '', { shouldValidate: true });
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <AvatarUploader
+          initialUrl={avatarUrl || null}
+          onUploadSuccess={handleAvatarUpload}
+          onRemove={handleAvatarRemove}
+          disabled={isSubmitting}
+          uploadPath={`family_members/${memberId}`}
+          fallbackText={form.getValues('name')?.substring(0, 2).toUpperCase() || 'FM'}
+        />
         <FormField
           control={form.control}
           name="name"
@@ -75,19 +98,6 @@ export const MemberForm: React.FC<FamilyMemberFormProps> = ({ initialData, onSub
               <FormLabel>Email (Optional)</FormLabel>
               <FormControl>
                 <Input type="email" placeholder="e.g., jane@example.com" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="avatar_url"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Avatar URL (Optional)</FormLabel>
-              <FormControl>
-                <Input placeholder="https://..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -155,21 +165,23 @@ const FamilyMemberList: React.FC<FamilyMemberListProps> = ({ members, isLoading,
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => handleCopyLink(member.share_id!)}
-                        className="text-xs h-8 px-3"
-                      >
-                        <Share2 className="h-3 w-3 mr-1" /> Share Link
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Copy Read-Only Share Link</p>
-                    </TooltipContent>
-                  </Tooltip>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => handleCopyLink(member.share_id!)}
+                          className="text-xs h-8 px-3"
+                        >
+                          <Share2 className="h-3 w-3 mr-1" /> Share Link
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Copy Read-Only Share Link</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                   <Button variant="ghost" size="icon" onClick={() => onEdit(member)}>
                     <Edit className="h-4 w-4" />
                   </Button>
