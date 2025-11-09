@@ -19,55 +19,43 @@ import About from "./pages/About";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import { SessionContextProvider } from "./integrations/supabase/session-context";
-import { ThemeProvider } from "./components/ThemeProvider";
-import { useInitialTheme } from "./hooks/use-initial-theme";
 import ProtectedLayout from "./components/ProtectedLayout";
 
 const queryClient = new QueryClient();
 
-// Component to wrap routes and apply initial theme
-const ThemeInitializer = ({ children }: { children: React.ReactNode }) => {
-  useInitialTheme();
-  return <>{children}</>;
-};
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <SessionContextProvider>
-      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-        <ThemeInitializer>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/privacy" element={<PrivacyPolicy />} />
-                <Route path="/terms" element={<TermsOfService />} />
-                <Route path="/share/:shareId" element={<SharedDashboard />} />
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/share/:shareId" element={<SharedDashboard />} />
 
-                {/* Protected Routes (Dashboard Layout Applied Here) */}
-                <Route element={<ProtectedLayout />}>
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/expenses" element={<ExpenseManagement />} />
-                  <Route path="/income" element={<IncomeManagement />} />
-                  <Route path="/bills" element={<BillManagement />} />
-                  <Route path="/reports" element={<Reports />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/family" element={<FamilyPage />} />
-                </Route>
+            {/* Protected Routes (Dashboard Layout Applied Here) */}
+            <Route element={<ProtectedLayout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/expenses" element={<ExpenseManagement />} />
+              <Route path="/income" element={<IncomeManagement />} />
+              <Route path="/bills" element={<BillManagement />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/family" element={<FamilyPage />} />
+            </Route>
 
-                {/* Catch-all Route */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
-        </ThemeInitializer>
-      </ThemeProvider>
+            {/* Catch-all Route */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
     </SessionContextProvider>
   </QueryClientProvider>
 );

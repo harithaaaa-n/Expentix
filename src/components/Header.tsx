@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { LogOut, Search, Bell } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { showError, showSuccess } from "@/utils/toast";
-import { ThemeToggle } from "./ThemeToggle";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useOwnerProfile } from "@/hooks/use-owner-profile";
 
@@ -56,7 +55,6 @@ const Header = () => {
         <Button variant="ghost" size="icon">
           <Bell className="h-5 w-5" />
         </Button>
-        <ThemeToggle />
         
         <div 
           className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
