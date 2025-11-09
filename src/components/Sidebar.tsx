@@ -20,9 +20,8 @@ const SidebarContent = () => {
   return (
     <div className="flex flex-col gap-2 p-4 h-full">
       <div className="flex h-16 items-center px-4">
-        <Link to="/" className="flex items-center gap-2 font-semibold text-sidebar-primary">
-          <DollarSign className="h-6 w-6" />
-          <span>HomeExpense+</span>
+        <Link to="/" className="flex items-center">
+          <img src="/pasted-image-2025-11-09T06-19-04-218Z.png" alt="Expentix Logo" className="h-8" />
         </Link>
       </div>
       <nav className="grid gap-1 flex-grow">

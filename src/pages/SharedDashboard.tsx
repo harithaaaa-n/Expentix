@@ -131,7 +131,7 @@ const SharedDashboard: React.FC = () => {
         <Separator />
         
         <div className="text-center text-sm text-muted-foreground">
-          Data provided by HomeExpense+. This view is read-only.
+          Data provided by Expentix. This view is read-only.
         </div>
       </motion.div>
     </div>

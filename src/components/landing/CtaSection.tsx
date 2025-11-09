@@ -21,7 +21,7 @@ const CtaSection: React.FC = () => {
             Start tracking your smart spending today 💫
           </h2>
           <p className="text-lg text-muted-foreground">
-            Join thousands of families who found clarity and confidence with HomeExpense+.
+            Join thousands of families who found clarity and confidence with Expentix.
           </p>
           <Link to="/signup">
             <Button

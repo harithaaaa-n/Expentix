@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Wallet, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
@@ -50,9 +50,8 @@ const LandingHeader: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 font-bold text-2xl text-primary">
-            <Wallet className="h-7 w-7 text-blue-500" />
-            <span>HomeExpense+</span>
+          <Link to="/" className="flex items-center">
+            <img src="/pasted-image-2025-11-09T06-19-04-218Z.png" alt="Expentix Logo" className="h-9" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -93,9 +92,8 @@ const LandingHeader: React.FC = () => {
                 <SheetContent side="right" className="w-full max-w-xs bg-background p-6">
                   <div className="flex flex-col h-full">
                     <div className="flex justify-between items-center mb-8">
-                       <Link to="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-                          <Wallet className="h-6 w-6 text-blue-500" />
-                          <span>HomeExpense+</span>
+                       <Link to="/" className="flex items-center">
+                          <img src="/pasted-image-2025-11-09T06-19-04-218Z.png" alt="Expentix Logo" className="h-8" />
                         </Link>
                       <SheetClose asChild>
                          <Button variant="ghost" size="icon">

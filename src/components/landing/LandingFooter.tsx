@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
-import { Github, Linkedin, Twitter, Wallet } from 'lucide-react';
+import { Github, Linkedin, Twitter } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { MadeWithDyad } from '../made-with-dyad';
 
@@ -36,10 +36,9 @@ const LandingFooter: React.FC = () => {
             <motion.div
               whileHover={{ rotate: [0, 5, -5, 0] }}
               transition={{ duration: 0.5 }}
-              className="flex items-center justify-center md:justify-start text-2xl font-bold text-primary"
+              className="flex items-center justify-center md:justify-start"
             >
-              <Wallet className="h-6 w-6 mr-2 text-blue-500" />
-              HomeExpense+
+              <img src="/pasted-image-2025-11-09T06-19-04-218Z.png" alt="Expentix Logo" className="h-9" />
             </motion.div>
             <p className="text-sm text-muted-foreground">
               Financial clarity for the modern family.

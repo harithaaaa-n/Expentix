@@ -30,7 +30,7 @@ const Login = () => {
         className="w-full max-w-md p-8 space-y-6 bg-card rounded-lg shadow-xl border border-border"
       >
         <h2 className="text-3xl font-bold text-center text-primary">
-          Welcome to HomeExpense+
+          Welcome to Expentix
         </h2>
         
         {/* Animated Mascot Placeholder */}
