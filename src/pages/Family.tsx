@@ -18,6 +18,7 @@ import CategoryPieChart from "@/components/CategoryPieChart";
 import MonthlyExpenseChart from "@/components/MonthlyExpenseChart";
 import { BarChart } from "recharts";
 import LeaderboardCard from "@/components/LeaderboardCard"; // Import the new component
+import ActivityFeedCard from "@/components/ActivityFeedCard"; // Import the new component
 
 // Placeholder for Member Expense Comparison Chart
 const MemberExpenseComparisonChart: React.FC<{ members: FamilyMember[], ownerId: string, ownerName: string }> = ({ members, ownerId, ownerName }) => {
@@ -277,23 +278,8 @@ const FamilyPage = () => {
           onDelete={handleDelete} 
         />
 
-        {/* Placeholder for Activity Feed */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Activity className="mr-2 h-5 w-5 text-green-500" />
-              Family Activity Feed
-            </CardTitle>
-            <CardDescription>
-              Keep track of financial events in real-time. Coming soon!
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              This feed will show when members add or update expenses and income.
-            </p>
-          </CardContent>
-        </Card>
+        {/* Activity Feed */}
+        <ActivityFeedCard members={members} />
       </div>
     </DashboardLayout>
   );
