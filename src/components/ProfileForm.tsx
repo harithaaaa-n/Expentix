@@ -32,7 +32,7 @@ interface Profile {
 
 const ProfileForm: React.FC = () => {
   const { user, isLoading: isSessionLoading } = useSession();
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme(); // Get theme state and setter
   const [initialProfile, setInitialProfile] = useState<ProfileFormValues | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,7 +43,7 @@ const ProfileForm: React.FC = () => {
       first_name: '',
       last_name: '',
       avatar_url: '',
-      theme: 'light',
+      theme: (theme as 'light' | 'dark' | 'system') || 'light', // Use current theme as fallback default
     },
   });
 
@@ -69,10 +69,18 @@ const ProfileForm: React.FC = () => {
       setInitialProfile(profileData);
       form.reset(profileData);
       
-      // Apply theme preference on load
+      // Apply theme preference on load if it differs from the current state
       if (profileData.theme && profileData.theme !== theme) {
         setTheme(profileData.theme);
       }
+    } else {
+      // If no profile exists, ensure the form is initialized with the current active theme
+      form.reset({
+        first_name: '',
+        last_name: '',
+        avatar_url: '',
+        theme: (theme as 'light' | 'dark' | 'system') || 'light',
+      });
     }
     setIsLoading(false);
   };
@@ -102,12 +110,13 @@ const ProfileForm: React.FC = () => {
 
       if (error) throw error;
 
-      // Update the theme immediately if it changed
-      if (data.theme && data.theme !== theme) {
+      // Update the theme immediately if it changed or if it's the first save
+      if (data.theme) {
         setTheme(data.theme);
       }
       
       showSuccess('Profile updated successfully!');
+      // Re-fetch profile to ensure state consistency, although theme is set above
       fetchProfile(); 
     } catch (error: any) {
       showError('Failed to update profile: ' + error.message);
