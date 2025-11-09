@@ -1,11 +1,12 @@
 import { useSession } from "@/integrations/supabase/session-context";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { LogOut, Search, Bell } from "lucide-react";
+import { LogOut, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { showError, showSuccess } from "@/utils/toast";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useOwnerProfile } from "@/hooks/use-owner-profile";
+import NotificationBell from "./NotificationBell";
 
 const pathTitleMap: { [key: string]: string } = {
   "/dashboard": "Dashboard Overview",
@@ -42,7 +43,7 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-background/80 backdrop-blur-xl px-4 md:px-6 md:ml-64">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-background/80 backdrop-blur-xl px-4 md:px-6">
       <div>
         <h1 className="text-xl font-bold text-deep-slate dark:text-primary hidden md:block">
           {pageTitle}
@@ -52,9 +53,8 @@ const Header = () => {
         <Button variant="ghost" size="icon" className="hidden md:inline-flex">
           <Search className="h-5 w-5" />
         </Button>
-        <Button variant="ghost" size="icon">
-          <Bell className="h-5 w-5" />
-        </Button>
+        
+        <NotificationBell />
         
         <div 
           className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
