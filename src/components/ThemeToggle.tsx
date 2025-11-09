@@ -5,10 +5,11 @@ import { motion } from "framer-motion";
 import React from "react";
 
 export function ThemeToggle() {
-  const { setTheme, theme, resolvedTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
 
   const toggleTheme = () => {
+    // If currently dark, switch to light. Otherwise, switch to dark.
     const newTheme = isDark ? "light" : "dark";
     setTheme(newTheme);
   };
