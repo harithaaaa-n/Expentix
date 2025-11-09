@@ -14,6 +14,7 @@ import Settings from "./pages/Settings";
 import FamilyPage from "./pages/Family";
 import SharedDashboard from "./pages/SharedDashboard";
 import BillManagement from "./pages/BillManagement";
+import About from "./pages/About"; // Import the new page
 import { SessionContextProvider } from "./integrations/supabase/session-context";
 import { ThemeProvider } from "./components/ThemeProvider";
 
@@ -31,6 +32,7 @@ const App = () => (
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/about" element={<About />} /> {/* Add the new route */}
               <Route path="/dashboard" element={<Navigate to="/" replace />} />
               <Route path="/expenses" element={<ExpenseManagement />} />
               <Route path="/income" element={<IncomeManagement />} />

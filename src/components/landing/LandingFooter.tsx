@@ -56,7 +56,7 @@ const LandingFooter: React.FC = () => {
             </div>
             <div className="flex flex-col space-y-2">
               <span className="font-semibold text-deep-slate dark:text-primary mb-1">Company</span>
-              <FooterLink to="#">About Us</FooterLink>
+              <FooterLink to="/about">About Us</FooterLink>
               <FooterLink to="#">Contact</FooterLink>
             </div>
             <div className="flex flex-col space-y-2">
