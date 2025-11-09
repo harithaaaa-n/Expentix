@@ -1,143 +1,86 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { Menu } from 'lucide-react';
 import { useSession } from '@/integrations/supabase/session-context';
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const navLinks = [
+  { name: 'Home', href: '#home' },
   { name: 'Features', href: '#features' },
-  { name: 'Showcase', href: '#showcase' },
-  { name: 'Testimonials', href: '#testimonials' },
+  { name: 'Reports', href: '#reports' },
+  { name: 'Family', href: '#family' },
 ];
 
-const NavLink: React.FC<{ href: string; children: React.ReactNode; onClick?: () => void }> = ({ href, children, onClick }) => (
-  <a
-    href={href}
-    onClick={onClick}
-    className="text-md font-medium text-muted-foreground hover:text-primary transition-colors"
-  >
-    {children}
-  </a>
+const NavItems: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => (
+  <>
+    {navLinks.map(link => (
+      isMobile ? (
+        <SheetClose asChild key={link.name}>
+          <a href={link.href} className="hover:text-indigo-600 text-lg">{link.name}</a>
+        </SheetClose>
+      ) : (
+        <a key={link.name} href={link.href} className="hover:text-indigo-600">{link.name}</a>
+      )
+    ))}
+  </>
 );
 
-const LandingHeader: React.FC = () => {
-  const [scrolled, setScrolled] = useState(false);
-  const isMobile = useIsMobile();
-  const { user } = useSession();
+const ActionButton: React.FC<{ user: any, isMobile?: boolean }> = ({ user, isMobile }) => {
+  const buttonContent = user ? 'Go to Dashboard' : 'Get Started';
+  const buttonLink = user ? '/dashboard' : '/signup';
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const button = (
+    <Link to={buttonLink}>
+      <Button className="bg-gradient-to-r from-indigo-500 to-sky-500 text-white px-5 py-2 rounded-xl hover:scale-105 transition">
+        {buttonContent}
+      </Button>
+    </Link>
+  );
+
+  return isMobile ? <SheetClose asChild>{button}</SheetClose> : button;
+};
+
+const LandingHeader: React.FC = () => {
+  const { user } = useSession();
+  const isMobile = useIsMobile();
 
   return (
-    <motion.header
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        scrolled ? "bg-background/80 backdrop-blur-lg border-b border-border" : "bg-transparent"
-      )}
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5, ease: 'easeOut' }}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          {/* Logo */}
-          <Link to="/" className="flex items-center">
-            <img src="/Gemini_Generated_Image_4yfve64yfve64yfv.png" alt="Expentix Logo" className="h-12" />
-          </Link>
-
-          {/* Desktop Navigation */}
-          {!isMobile && (
-            <nav className="hidden md:flex items-center space-x-8">
-              {navLinks.map(link => (
-                <NavLink key={link.name} href={link.href}>{link.name}</NavLink>
-              ))}
-            </nav>
-          )}
-
-          {/* Auth Buttons & Mobile Menu Trigger */}
-          <div className="flex items-center space-x-3">
-            {!isMobile ? (
-              <>
-                {user ? (
-                  <Link to="/dashboard">
-                    <Button>Go to Dashboard</Button>
-                  </Link>
-                ) : (
-                  <>
-                    <Link to="/login">
-                      <Button variant="ghost">Login</Button>
-                    </Link>
-                    <Link to="/signup">
-                      <Button>Sign Up</Button>
-                    </Link>
-                  </>
-                )}
-              </>
-            ) : (
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Menu className="h-6 w-6" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="right" className="w-full max-w-xs bg-background p-6">
-                  <div className="flex flex-col h-full">
-                    <div className="flex justify-between items-center mb-8">
-                       <Link to="/" className="flex items-center">
-                          <img src="/Gemini_Generated_Image_4yfve64yfve64yfv.png" alt="Expentix Logo" className="h-10" />
-                        </Link>
-                      <SheetClose asChild>
-                         <Button variant="ghost" size="icon">
-                            <X className="h-6 w-6" />
-                          </Button>
-                      </SheetClose>
-                    </div>
-                    <nav className="flex flex-col space-y-6">
-                      {navLinks.map(link => (
-                         <SheetClose asChild key={link.name}>
-                            <NavLink href={link.href}>{link.name}</NavLink>
-                         </SheetClose>
-                      ))}
-                    </nav>
-                    <div className="mt-auto pt-6 border-t border-border space-y-3">
-                       {user ? (
-                         <SheetClose asChild>
-                           <Link to="/dashboard" className="w-full">
-                             <Button className="w-full">Go to Dashboard</Button>
-                           </Link>
-                         </SheetClose>
-                       ) : (
-                         <>
-                           <SheetClose asChild>
-                             <Link to="/login" className="w-full">
-                               <Button variant="outline" className="w-full">Login</Button>
-                             </Link>
-                           </SheetClose>
-                           <SheetClose asChild>
-                             <Link to="/signup" className="w-full">
-                               <Button className="w-full">Sign Up</Button>
-                             </Link>
-                           </SheetClose>
-                         </>
-                       )}
-                    </div>
-                  </div>
-                </SheetContent>
-              </Sheet>
-            )}
-          </div>
-        </div>
+    <header className="sticky top-0 z-50 bg-white/40 backdrop-blur-md shadow-[0_2px_15px_rgba(0,0,0,0.05)] flex items-center justify-between px-8 py-4">
+      <div className="flex items-center gap-2">
+        <Link to="/">
+          <img
+            src="/Gemini_Generated_Image_4yfve64yfve64yfv.png"
+            alt="Expentix Logo"
+            className="h-12 md:h-14 hover:scale-105 transition-transform duration-300"
+          />
+        </Link>
       </div>
-    </motion.header>
+
+      {/* Desktop Navigation */}
+      <nav className="hidden md:flex items-center gap-6 text-muted-foreground font-medium">
+        <NavItems />
+        <ActionButton user={user} />
+      </nav>
+
+      {/* Mobile Navigation */}
+      {isMobile && (
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <Menu className="h-6 w-6" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent>
+            <nav className="flex flex-col items-center gap-8 text-muted-foreground font-medium mt-16">
+              <NavItems isMobile />
+              <ActionButton user={user} isMobile />
+            </nav>
+          </SheetContent>
+        </Sheet>
+      )}
+    </header>
   );
 };
 

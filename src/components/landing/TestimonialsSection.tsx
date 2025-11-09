@@ -25,7 +25,7 @@ const TestimonialsSection: React.FC = () => {
   ];
 
   return (
-    <section className="py-24 px-4 md:px-8 relative overflow-hidden">
+    <section id="family" className="py-24 px-4 md:px-8 relative overflow-hidden">
       {/* Background element for visual interest */}
       <div className="absolute inset-0 opacity-10 dark:opacity-5">
         <motion.div

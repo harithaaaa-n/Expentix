@@ -50,7 +50,7 @@ const ShowcaseSection: React.FC = () => {
   const opacity = useTransform(scrollYProgress, [0.2, 0.5, 0.7, 1], [0, 1, 1, 0]);
 
   return (
-    <section ref={targetRef} id="showcase" className="py-32 px-4 md:px-8 bg-background overflow-hidden">
+    <section ref={targetRef} id="reports" className="py-32 px-4 md:px-8 bg-background overflow-hidden">
       <div className="max-w-6xl mx-auto text-center space-y-16">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

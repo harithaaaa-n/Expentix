@@ -23,7 +23,7 @@ const itemVariants: Variants = {
 
 const HeroSection: React.FC = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden py-24 px-4 md:px-8">
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden py-24 px-4 md:px-8">
       {/* Background Gradient and Floating Shapes */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#e0f7fa] via-[#e3f2fd] to-[#ede7f6] dark:from-gray-900 dark:via-gray-800 dark:to-gray-900/90">
         <motion.div
