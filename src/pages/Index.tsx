@@ -1,7 +1,7 @@
 import { useSession } from "@/integrations/supabase/session-context";
 import { Navigate } from "react-router-dom";
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Loader2 } from "lucide-react";
+import LandingHeader from "@/components/landing/LandingHeader";
 import HeroSection from "@/components/landing/HeroSection";
 import FeaturesSection from "@/components/landing/FeaturesSection";
 import ShowcaseSection from "@/components/landing/ShowcaseSection";
@@ -26,12 +26,15 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <HeroSection />
-      <FeaturesSection />
-      <ShowcaseSection />
-      <TestimonialsSection />
-      <CtaSection />
+    <div className="min-h-screen flex flex-col bg-background">
+      <LandingHeader />
+      <main>
+        <HeroSection />
+        <FeaturesSection />
+        <ShowcaseSection />
+        <TestimonialsSection />
+        <CtaSection />
+      </main>
       <LandingFooter />
     </div>
   );

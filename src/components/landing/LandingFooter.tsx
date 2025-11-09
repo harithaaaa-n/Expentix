@@ -72,7 +72,7 @@ const LandingFooter: React.FC = () => {
         {/* Bottom Row */}
         <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
           <p className="text-sm text-muted-foreground text-center">
-            &copy; {new Date().getFullYear()} HomeExpense+. All rights reserved.
+            &copy; {new Date().getFullYear()} Haritha.N. All rights reserved.
           </p>
           <div className="flex space-x-4">
             <SocialIcon href="#" icon={Github} />
