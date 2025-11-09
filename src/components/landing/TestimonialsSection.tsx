@@ -11,7 +11,7 @@ const TestimonialsSection: React.FC = () => {
       delay: 0.1,
     },
     {
-      quote: "HomeExpense+ made our family finances transparent and stress-free. Highly recommended!",
+      quote: "Expentix made our family finances transparent and stress-free. Highly recommended!",
       name: "Michael Chen",
       title: "Small Business Owner",
       delay: 0.3,
