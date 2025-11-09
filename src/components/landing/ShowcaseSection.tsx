@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp, TrendingDown, Wallet, BarChart3, Users } from 'lucide-react';
+import { TrendingUp, TrendingDown, Wallet, Users, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ColoredProgress } from '../ColoredProgress';
 
@@ -65,21 +65,23 @@ const FamilyMockup: React.FC = () => {
       </div>
       
       {/* Happy Family Image Placeholder */}
-      <div className="flex-grow flex items-center justify-center bg-lavender-violet/20 rounded-lg border border-lavender-violet/50 p-4 text-center text-muted-grey-blue dark:text-muted-foreground">
-        <div className="space-y-2">
-          <Users className="h-10 w-10 mx-auto text-lavender-violet" />
-          <p className="font-semibold">Happy Family Photo Placeholder</p>
-          <p className="text-sm">Shared goals, shared success.</p>
+      <div className="flex-grow flex flex-col items-center justify-center bg-lavender-violet/20 rounded-lg border border-lavender-violet/50 p-4 text-center text-muted-grey-blue dark:text-muted-foreground">
+        <div className="flex items-end justify-center space-x-1 text-lavender-violet">
+            <User className="h-12 w-12" />
+            <User className="h-16 w-16" />
+            <User className="h-10 w-10" />
         </div>
+        <p className="font-semibold mt-3 text-deep-slate dark:text-white">The Chen Family</p>
+        <p className="text-sm">Shared goals, shared success.</p>
       </div>
       
       <div className="mt-4 space-y-2">
         <div className="flex justify-between text-sm font-medium text-deep-slate dark:text-white">
-          <span>Member 1 (Owner)</span>
+          <span>Michael (Owner)</span>
           <span className="text-green-600">₹42,500 Spent</span>
         </div>
         <div className="flex justify-between text-sm font-medium text-deep-slate dark:text-white">
-          <span>Member 2 (Spouse)</span>
+          <span>Sarah (Spouse)</span>
           <span className="text-red-600">₹15,000 Spent</span>
         </div>
       </div>
