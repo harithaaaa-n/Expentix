@@ -8,6 +8,7 @@ import { useSession } from "@/integrations/supabase/session-context";
 import { Loader2, DollarSign, Wallet, TrendingDown, Target } from "lucide-react";
 import { motion } from "framer-motion";
 import { useFinancialSummary } from "@/hooks/use-financial-summary";
+import { Card, CardContent } from "@/components/ui/card";
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('en-IN', {
@@ -29,6 +30,7 @@ const Dashboard = () => {
   } = useFinancialSummary();
 
   const budgetUsedPercentage = totalIncome > 0 ? Math.round((totalExpenses / totalIncome) * 100) : 0;
+  const greetingName = user?.email?.split('@')[0];
 
   if (isLoading) {
     return (
@@ -45,16 +47,27 @@ const Dashboard = () => {
       transition={{ duration: 0.5 }}
       className="space-y-6"
     >
-      <h1 className="text-3xl font-bold mb-4">
-        Welcome back, {user?.email?.split('@')[0]} 👋
-      </h1>
+      {/* Welcome Banner (Using Card for visual appeal) */}
+      <Card className="p-6 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 border-blue-500/30">
+        <h1 className="text-3xl font-bold text-primary">
+          Dashboard Overview
+        </h1>
+        <p className="text-muted-foreground mt-1">
+          Track your progress and manage your finances, {greetingName}.
+        </p>
+      </Card>
       
       {/* Daily Reminder and Smart Suggestions */}
       <DailyReminderBanner />
       <SmartSuggestionBanner />
       
       {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
+      >
         <SummaryCard
           title="Total Income"
           value={formatCurrency(totalIncome)}
@@ -83,7 +96,7 @@ const Dashboard = () => {
           colorClass={budgetUsedPercentage > 100 ? "text-destructive" : "text-yellow-500"}
           delay={0.8}
         />
-      </div>
+      </motion.div>
 
       {/* Charts */}
       <div className="grid gap-6 lg:grid-cols-2">
