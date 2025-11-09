@@ -14,6 +14,7 @@ import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import FamilyPage from "./pages/Family";
 import SharedDashboard from "./pages/SharedDashboard";
+import BillManagement from "./pages/BillManagement";
 import { SessionContextProvider } from "./integrations/supabase/session-context";
 import { ThemeProvider } from "./components/ThemeProvider";
 
@@ -34,6 +35,7 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/expenses" element={<ExpenseManagement />} />
               <Route path="/income" element={<IncomeManagement />} />
+              <Route path="/bills" element={<BillManagement />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/family" element={<FamilyPage />} />
