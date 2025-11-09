@@ -117,6 +117,7 @@ const IncomeManagement = () => {
       amount: data.amount,
       date: format(data.date, 'yyyy-MM-dd'), // Format date for Supabase
       description: data.description || null,
+      member_id: data.member_id || null, // Ensure member_id is handled (will be null if added via this page)
     };
 
     try {
@@ -174,6 +175,7 @@ const IncomeManagement = () => {
       ...income,
       amount: parseFloat(String(income.amount)),
       date: new Date(income.date),
+      member_id: income.member_id || null, // Pass member_id if it exists
     };
     setEditingIncome(incomeForForm);
     setIsModalOpen(true);

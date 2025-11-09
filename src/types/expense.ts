@@ -28,6 +28,7 @@ export const ExpenseSchema = z.object({
   payment_type: z.enum(PaymentTypes).optional().nullable(),
   description: z.string().max(255).optional().nullable(),
   receipt_url: z.string().url().optional().or(z.literal('')).nullable(),
+  member_id: z.string().optional().nullable(), // New field
 });
 
 export type ExpenseFormValues = z.infer<typeof ExpenseSchema>;

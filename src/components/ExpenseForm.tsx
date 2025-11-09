@@ -31,6 +31,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit, isSubm
       payment_type: PaymentTypes[0],
       description: '',
       receipt_url: null,
+      member_id: null, // Initialize new field
     },
   });
 
@@ -43,6 +44,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit, isSubm
         ...initialData,
         amount: parseFloat(String(initialData.amount)),
         expense_date: new Date(initialData.expense_date),
+        member_id: initialData.member_id || null, // Ensure member_id is reset
       });
     }
   }, [initialData, form.reset]);
@@ -201,6 +203,19 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit, isSubm
           onUploadSuccess={handleReceiptUpload} 
           initialUrl={receiptUrl}
           disabled={isSubmitting}
+        />
+        
+        {/* Hidden field for member_id */}
+        <FormField
+          control={form.control}
+          name="member_id"
+          render={({ field }) => (
+            <FormItem className="hidden">
+              <FormControl>
+                <Input type="hidden" {...field} value={field.value ?? ''} />
+              </FormControl>
+            </FormItem>
+          )}
         />
 
         <Button type="submit" className="w-full" disabled={isSubmitting}>

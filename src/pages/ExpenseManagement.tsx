@@ -129,6 +129,7 @@ const ExpenseManagement = () => {
       receipt_url: data.receipt_url || null,
       payment_type: data.payment_type || null,
       description: data.description || null,
+      member_id: data.member_id || null, // Ensure member_id is handled (will be null if added via this page)
     };
 
     try {
@@ -186,6 +187,7 @@ const ExpenseManagement = () => {
       ...expense,
       amount: parseFloat(String(expense.amount)),
       expense_date: new Date(expense.expense_date),
+      member_id: expense.member_id || null, // Pass member_id if it exists
     };
     setEditingExpense(expenseForForm);
     setIsModalOpen(true);

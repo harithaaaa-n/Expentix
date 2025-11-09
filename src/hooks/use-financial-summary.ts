@@ -43,13 +43,33 @@ interface FinancialSummary {
   isLoading: boolean;
 }
 
-const fetchFinancialData = async (userId: string) => {
+interface FinancialSummaryResult extends FinancialSummary {
+  refetch: () => Promise<unknown>;
+}
+
+interface FetchParams {
+  userId: string;
+  memberId?: string; // Optional member ID to filter by
+}
+
+const fetchFinancialData = async ({ userId, memberId }: FetchParams) => {
   const currentMonthStart = format(startOfMonth(new Date()), 'yyyy-MM-dd');
   
+  // Base query is always filtered by the owner's user_id (RLS requirement)
+  let incomeQuery = supabase.from('income').select('amount, date, member_id').eq('user_id', userId);
+  let expenseQuery = supabase.from('expenses').select('*, member_id').eq('user_id', userId).order('expense_date', { ascending: false });
+  let budgetQuery = supabase.from('budgets').select('category, amount, member_id').eq('user_id', userId).eq('month', currentMonthStart);
+
+  if (memberId) {
+    incomeQuery = incomeQuery.eq('member_id', memberId);
+    expenseQuery = expenseQuery.eq('member_id', memberId);
+    budgetQuery = budgetQuery.eq('member_id', memberId);
+  }
+
   const [incomeResult, expenseResult, budgetResult] = await Promise.all([
-    supabase.from('income').select('amount').eq('user_id', userId),
-    supabase.from('expenses').select('*').eq('user_id', userId).order('expense_date', { ascending: false }),
-    supabase.from('budgets').select('category, amount').eq('user_id', userId).eq('month', currentMonthStart),
+    incomeQuery,
+    expenseQuery,
+    budgetQuery,
   ]);
 
   if (incomeResult.error) throw incomeResult.error;
@@ -57,19 +77,21 @@ const fetchFinancialData = async (userId: string) => {
   if (budgetResult.error) throw budgetResult.error;
 
   return { 
-    income: incomeResult.data as { amount: number }[],
+    income: incomeResult.data as { amount: number, date: string, member_id: string | null }[],
     expenses: expenseResult.data as Expense[],
-    budgets: budgetResult.data as { category: string, amount: number }[]
+    budgets: budgetResult.data as { category: string, amount: number, member_id: string | null }[]
   };
 };
 
-const useFinancialSummary = (targetUserId?: string | null): FinancialSummary => {
+const useFinancialSummary = (targetUserId?: string | null, memberId?: string | null): FinancialSummaryResult => {
   const { user, isLoading: isSessionLoading } = useSession();
   const userId = targetUserId || user?.id;
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['financialSummary', userId],
-    queryFn: () => fetchFinancialData(userId!),
+  const queryKey = ['financialSummary', userId, memberId];
+  
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: queryKey,
+    queryFn: () => fetchFinancialData({ userId: userId!, memberId: memberId || undefined }),
     enabled: !!userId,
   });
 
@@ -151,7 +173,19 @@ const useFinancialSummary = (targetUserId?: string | null): FinancialSummary => 
 
     const categoryExpenses = Array.from(categoryMap.entries()).map(([name, value]) => ({ name, value }));
     const topCategories = [...categoryExpenses].sort((a, b) => b.value - a.value);
-    const monthlyExpenses = Array.from(monthlyMap.entries()).map(([month, expenses]) => ({ month, expenses }));
+    
+    // Only show the last 6 months in the chart
+    const sortedMonthlyKeys = Array.from(monthlyMap.keys()).sort((a, b) => {
+        const dateA = new Date(a);
+        const dateB = new Date(b);
+        return dateA.getTime() - dateB.getTime();
+    }).slice(-6);
+    
+    const monthlyExpenses = sortedMonthlyKeys.map(month => ({
+        month,
+        expenses: monthlyMap.get(month) || 0
+    }));
+    
     const recentExpenses = expenses.slice(0, 5);
 
     return {
@@ -167,7 +201,7 @@ const useFinancialSummary = (targetUserId?: string | null): FinancialSummary => 
     };
   }, [data]);
 
-  return { ...summary, isLoading: isLoading || isSessionLoading };
+  return { ...summary, isLoading: isLoading || isSessionLoading, refetch };
 };
 
 export { useFinancialSummary };

@@ -27,6 +27,7 @@ const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSubmit, isSubmit
       amount: 0,
       date: new Date(),
       description: '',
+      member_id: null, // Initialize new field
     },
   });
 
@@ -36,6 +37,7 @@ const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSubmit, isSubmit
         ...initialData,
         amount: parseFloat(String(initialData.amount)),
         date: new Date(initialData.date),
+        member_id: initialData.member_id || null, // Ensure member_id is reset
       });
     }
   }, [initialData, form.reset]);
@@ -146,6 +148,19 @@ const IncomeForm: React.FC<IncomeFormProps> = ({ initialData, onSubmit, isSubmit
                 <Textarea placeholder="Details about the income..." {...field} />
               </FormControl>
               <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        {/* Hidden field for member_id */}
+        <FormField
+          control={form.control}
+          name="member_id"
+          render={({ field }) => (
+            <FormItem className="hidden">
+              <FormControl>
+                <Input type="hidden" {...field} value={field.value ?? ''} />
+              </FormControl>
             </FormItem>
           )}
         />

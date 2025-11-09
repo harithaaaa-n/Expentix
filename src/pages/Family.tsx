@@ -2,25 +2,63 @@ import DashboardLayout from "@/components/DashboardLayout";
 import FamilyMemberList, { MemberForm } from "@/components/FamilyMemberManager";
 import FamilyMemberCard from "@/components/FamilyMemberCard";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Trophy, Activity, Plus, DollarSign, LayoutDashboard, Loader2 } from "lucide-react";
+import { Trophy, Activity, Plus, DollarSign, LayoutDashboard, Loader2, Users, TrendingUp, TrendingDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useSession } from "@/integrations/supabase/session-context";
 import { supabase } from "@/integrations/supabase/client";
 import { FamilyMember, FamilyMemberFormValues } from "@/types/settings";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { showError, showSuccess } from "@/utils/toast";
+import { useOwnerProfile } from "@/hooks/use-owner-profile";
+import MemberTransactionForm from "@/components/MemberTransactionForm";
+import { useFinancialSummary } from "@/hooks/use-financial-summary";
+import CategoryPieChart from "@/components/CategoryPieChart";
+import MonthlyExpenseChart from "@/components/MonthlyExpenseChart";
+import { BarChart } from "recharts";
+
+// Placeholder for Member Expense Comparison Chart
+const MemberExpenseComparisonChart: React.FC<{ members: FamilyMember[], ownerId: string, ownerName: string }> = ({ members, ownerId, ownerName }) => {
+  // NOTE: In a real app, we would fetch aggregated data for all members here.
+  // For now, we use mock data based on member names.
+  const chartData = [
+    { name: ownerName, expenses: 35000 },
+    ...members.map(m => ({
+      name: m.name.split(' ')[0],
+      expenses: 10000 + Math.floor(Math.random() * 20000)
+    }))
+  ];
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Member Expense Comparison</CardTitle>
+        <CardDescription>Monthly spending comparison across all family members.</CardDescription>
+      </CardHeader>
+      <CardContent className="h-[300px] p-2 md:p-6">
+        <MonthlyExpenseChart data={chartData.map(d => ({ month: d.name, expenses: d.expenses }))} />
+      </CardContent>
+    </Card>
+  );
+};
 
 const FamilyPage = () => {
   const { user } = useSession();
+  const { data: ownerProfileData, isLoading: isProfileLoading } = useOwnerProfile();
+  const { refetch: refetchSummary } = useFinancialSummary(); // Hook to trigger refetch of overall summary
+
   const [members, setMembers] = useState<FamilyMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
+  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<FamilyMemberFormValues | undefined>(undefined);
 
-  const fetchMembers = async () => {
+  const ownerName = ownerProfileData?.ownerName || 'You';
+  const ownerId = user?.id || '';
+
+  const fetchMembers = useCallback(async () => {
     if (!user) return;
     setIsLoading(true);
     const { data, error } = await supabase
@@ -35,15 +73,15 @@ const FamilyPage = () => {
       setMembers(data as FamilyMember[]);
     }
     setIsLoading(false);
-  };
+  }, [user]);
 
   useEffect(() => {
     if (user) {
       fetchMembers();
     }
-  }, [user]);
+  }, [user, fetchMembers]);
 
-  const handleFormSubmit = async (data: FamilyMemberFormValues) => {
+  const handleMemberFormSubmit = async (data: FamilyMemberFormValues) => {
     if (!user) return;
     setIsSubmitting(true);
 
@@ -65,7 +103,7 @@ const FamilyPage = () => {
       }
       
       await fetchMembers();
-      setIsModalOpen(false);
+      setIsMemberModalOpen(false);
       setEditingMember(undefined);
     } catch (error: any) {
       showError('Operation failed: ' + error.message);
@@ -82,6 +120,7 @@ const FamilyPage = () => {
       if (error) throw error;
       showSuccess('Family member deleted successfully!');
       setMembers(prev => prev.filter(m => m.id !== id));
+      refetchSummary(); // Refetch overall summary after deletion
     } catch (error: any) {
       showError('Deletion failed: ' + error.message);
     }
@@ -89,15 +128,20 @@ const FamilyPage = () => {
 
   const handleEdit = (member: FamilyMember) => {
     setEditingMember(member);
-    setIsModalOpen(true);
+    setIsMemberModalOpen(true);
   };
 
-  const handleAdd = () => {
+  const handleAddMember = () => {
     setEditingMember(undefined);
-    setIsModalOpen(true);
+    setIsMemberModalOpen(true);
+  };
+  
+  const handleTransactionSuccess = () => {
+    refetchSummary(); // Refetch overall summary after transaction
+    fetchMembers(); // Refetch member data to update cards
   };
 
-  if (isLoading) {
+  if (isLoading || isProfileLoading) {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center h-full">
@@ -118,10 +162,10 @@ const FamilyPage = () => {
           </div>
           <div className="flex space-x-3 self-start md:self-center">
             
-            {/* Add Member Button (Functional) */}
-            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+            {/* Add Member Button */}
+            <Dialog open={isMemberModalOpen} onOpenChange={setIsMemberModalOpen}>
               <DialogTrigger asChild>
-                <Button size="sm" onClick={handleAdd}>
+                <Button size="sm" onClick={handleAddMember}>
                   <Plus className="mr-2 h-4 w-4" /> Add Member
                 </Button>
               </DialogTrigger>
@@ -131,20 +175,36 @@ const FamilyPage = () => {
                 </DialogHeader>
                 <MemberForm 
                   initialData={editingMember} 
-                  onSubmit={handleFormSubmit} 
+                  onSubmit={handleMemberFormSubmit} 
                   isSubmitting={isSubmitting}
                 />
               </DialogContent>
             </Dialog>
 
-            {/* Add Transaction Button (Functional) */}
-            <Link to="/expenses">
-              <Button variant="outline">
-                <DollarSign className="mr-2 h-4 w-4" /> Add Transaction
-              </Button>
-            </Link>
+            {/* Add Transaction Button (Opens unified form) */}
+            <Dialog open={isTransactionModalOpen} onOpenChange={setIsTransactionModalOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <DollarSign className="mr-2 h-4 w-4" /> Add Transaction
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[600px]">
+                <DialogHeader>
+                  <DialogTitle>Log Family Transaction</DialogTitle>
+                </DialogHeader>
+                <MemberTransactionForm 
+                  members={members}
+                  ownerName={ownerName}
+                  ownerId={ownerId}
+                  onSuccess={() => {
+                    setIsTransactionModalOpen(false);
+                    handleTransactionSuccess();
+                  }}
+                />
+              </DialogContent>
+            </Dialog>
             
-            {/* View Family Summary Button (Functional - links to Dashboard) */}
+            {/* View Family Summary Button (links to Dashboard) */}
             <Link to="/dashboard">
               <Button variant="outline">
                 <LayoutDashboard className="mr-2 h-4 w-4" /> View Family Summary
@@ -153,12 +213,12 @@ const FamilyPage = () => {
           </div>
         </div>
         
-        {/* Family Member Cards */}
+        {/* Individual Member Wallets (Cards) */}
         <Card>
           <CardHeader>
-            <CardTitle>Individual Member Insights</CardTitle>
+            <CardTitle>Individual Member Wallets</CardTitle>
             <CardDescription>
-              View spending summaries for each family member. (Note: Data shown is currently based on the owner's overall finances for demonstration.)
+              Track personal income, expenses, and budget progress for each member.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -169,10 +229,39 @@ const FamilyPage = () => {
             ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {members.map((member) => (
-                  <FamilyMemberCard key={member.id} member={member} />
+                  <FamilyMemberCard 
+                    key={member.id} 
+                    member={member} 
+                    ownerName={ownerName}
+                    ownerId={ownerId}
+                    allMembers={members}
+                    onTransactionSuccess={handleTransactionSuccess}
+                  />
                 ))}
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Family Analytics Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Users className="mr-2 h-5 w-5 text-primary" />
+              Combined Family Analytics
+            </CardTitle>
+            <CardDescription>
+              Visualizations of the entire family's financial health.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-6 lg:grid-cols-2">
+            {/* Placeholder for Combined Category Pie Chart */}
+            <Card className="h-[350px] flex items-center justify-center bg-muted/50">
+              <p className="text-muted-foreground">Combined Category Pie Chart (Coming Soon)</p>
+            </Card>
+            
+            {/* Member Expense Comparison Bar Chart */}
+            <MemberExpenseComparisonChart members={members} ownerId={ownerId} ownerName={ownerName} />
           </CardContent>
         </Card>
 

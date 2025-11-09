@@ -14,6 +14,7 @@ export const IncomeSchema = z.object({
   amount: z.number().min(0.01, "Amount must be greater than zero"),
   date: z.date(),
   description: z.string().max(255).optional().nullable(),
+  member_id: z.string().optional().nullable(), // New field
 });
 
 export type IncomeFormValues = z.infer<typeof IncomeSchema>;
