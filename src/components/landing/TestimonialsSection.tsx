@@ -6,19 +6,19 @@ const TestimonialsSection: React.FC = () => {
   const testimonials = [
     {
       quote: "Finally, an expense tracker that feels human. The design makes budgeting enjoyable.",
-      name: "Priya Sharma",
+      name: "Sarah Johnson",
       title: "Financial Analyst",
       delay: 0.1,
     },
     {
       quote: "HomeExpense+ made our family finances transparent and stress-free. Highly recommended!",
-      name: "Dinesh Kumar",
+      name: "Michael Chen",
       title: "Small Business Owner",
       delay: 0.3,
     },
     {
       quote: "The UI is so clean, it's addictive! I actually look forward to logging my expenses now. A game-changer.",
-      name: "Haritha Menon",
+      name: "Emily Rodriguez",
       title: "Software Engineer",
       delay: 0.5,
     },
