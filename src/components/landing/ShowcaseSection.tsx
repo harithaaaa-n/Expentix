@@ -7,12 +7,51 @@ import { ColoredProgress } from '../ColoredProgress';
 
 const DashboardMockup: React.FC = () => {
   return (
-    <div className="w-full h-full p-2 bg-white/30 dark:bg-gray-900/30 rounded-xl shadow-2xl border border-white/50 backdrop-blur-lg overflow-hidden">
-      <img 
-        src="/pasted-image-2025-11-09T06-45-11-563Z.png" 
-        alt="Dashboard Showcase" 
-        className="w-full h-full object-cover rounded-lg"
-      />
+    <div className="w-full h-full p-6 bg-white/30 dark:bg-gray-900/30 rounded-xl shadow-2xl border border-white/50 backdrop-blur-lg">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-xl font-semibold text-deep-slate dark:text-white">Monthly Overview</h3>
+        <Wallet className="h-6 w-6 text-sky-blue" />
+      </div>
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <Card className="bg-white/50 dark:bg-gray-800/50 border-green-500/50 backdrop-blur-sm">
+          <CardHeader className="p-3 flex flex-row items-center justify-between space-y-0">
+            <CardTitle className="text-sm font-medium text-green-600 dark:text-green-400">Income</CardTitle>
+            <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
+          </CardHeader>
+          <CardContent className="p-3 pt-0">
+            <div className="text-xl font-bold text-deep-slate dark:text-white">₹85,000</div>
+          </CardContent>
+        </Card>
+        <Card className="bg-white/50 dark:bg-gray-800/50 border-red-500/50 backdrop-blur-sm">
+          <CardHeader className="p-3 flex flex-row items-center justify-between space-y-0">
+            <CardTitle className="text-sm font-medium text-destructive">Expenses</CardTitle>
+            <TrendingDown className="h-4 w-4 text-destructive" />
+          </CardHeader>
+          <CardContent className="p-3 pt-0">
+            <div className="text-xl font-bold text-deep-slate dark:text-white">₹42,500</div>
+          </CardContent>
+        </Card>
+      </div>
+      
+      {/* Interactive Chart Placeholder */}
+      <Card className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4">
+        <h4 className="text-sm font-medium mb-2 text-deep-slate dark:text-white">Expense Trend (Last 6 Months)</h4>
+        <div className="h-24 flex items-end space-x-2">
+          {[10, 30, 50, 70, 60, 90].map((height, index) => (
+            <div 
+              key={index} 
+              className="flex-1 bg-sky-blue/70 rounded-t-sm transition-all duration-500" 
+              style={{ height: `${height}%` }} 
+            />
+          ))}
+        </div>
+      </Card>
+      
+      {/* Budget Progress Placeholder */}
+      <div className="mt-4 space-y-2">
+        <h4 className="text-sm font-medium text-deep-slate dark:text-white">Food Budget (85% Used)</h4>
+        <ColoredProgress value={85} className="h-2" indicatorClassName="bg-red-500" />
+      </div>
     </div>
   );
 };
