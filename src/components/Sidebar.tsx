@@ -21,7 +21,7 @@ const SidebarContent = () => {
     <div className="flex flex-col gap-2 p-4 h-full">
       <div className="flex h-16 items-center px-4">
         <Link to="/" className="flex items-center">
-          <img src="/pasted-image-2025-11-09T06-19-04-218Z.png" alt="Expentix Logo" className="h-8" />
+          <img src="/Gemini_Generated_Image_4yfve64yfve64yfv.png" alt="Expentix Logo" className="h-10" />
         </Link>
       </div>
       <nav className="grid gap-1 flex-grow">

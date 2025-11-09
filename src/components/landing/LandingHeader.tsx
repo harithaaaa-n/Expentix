@@ -51,7 +51,7 @@ const LandingHeader: React.FC = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img src="/pasted-image-2025-11-09T06-19-04-218Z.png" alt="Expentix Logo" className="h-9" />
+            <img src="/Gemini_Generated_Image_4yfve64yfve64yfv.png" alt="Expentix Logo" className="h-12" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -93,7 +93,7 @@ const LandingHeader: React.FC = () => {
                   <div className="flex flex-col h-full">
                     <div className="flex justify-between items-center mb-8">
                        <Link to="/" className="flex items-center">
-                          <img src="/pasted-image-2025-11-09T06-19-04-218Z.png" alt="Expentix Logo" className="h-8" />
+                          <img src="/Gemini_Generated_Image_4yfve64yfve64yfv.png" alt="Expentix Logo" className="h-10" />
                         </Link>
                       <SheetClose asChild>
                          <Button variant="ghost" size="icon">

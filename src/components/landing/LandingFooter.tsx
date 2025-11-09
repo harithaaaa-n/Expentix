@@ -38,7 +38,7 @@ const LandingFooter: React.FC = () => {
               transition={{ duration: 0.5 }}
               className="flex items-center justify-center md:justify-start"
             >
-              <img src="/pasted-image-2025-11-09T06-19-04-218Z.png" alt="Expentix Logo" className="h-9" />
+              <img src="/Gemini_Generated_Image_4yfve64yfve64yfv.png" alt="Expentix Logo" className="h-12" />
             </motion.div>
             <p className="text-sm text-muted-foreground">
               Financial clarity for the modern family.
