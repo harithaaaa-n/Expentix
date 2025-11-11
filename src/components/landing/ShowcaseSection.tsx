@@ -126,14 +126,14 @@ const ShowcaseSection: React.FC = () => {
         </motion.div>
 
         {/* 3D Simulated Mockups Grid */}
-        <div className="grid md:grid-cols-2 gap-8 h-[600px] relative">
+        <div className="grid md:grid-cols-2 gap-8 md:h-[600px]">
           
           {/* Dashboard Mockup (Expenses Image) */}
-          <div className="perspective-1000 flex justify-center items-center absolute inset-0 md:relative md:inset-auto">
+          <div className="perspective-1000 flex justify-center items-center h-[450px] md:h-auto">
             <motion.div
               style={{ rotateX, translateY, opacity }}
               className={cn(
-                "w-full max-w-md h-[450px] rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.2)]",
+                "w-full max-w-md h-full rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.2)]",
                 "transform-style-preserve-3d transition-shadow duration-500"
               )}
             >
@@ -142,11 +142,11 @@ const ShowcaseSection: React.FC = () => {
           </div>
           
           {/* Family Mockup (Happy Family Image) */}
-          <div className="perspective-1000 flex justify-center items-center absolute inset-0 md:relative md:inset-auto mt-40 md:mt-0">
+          <div className="perspective-1000 flex justify-center items-center h-[450px] md:h-auto">
             <motion.div
               style={{ rotateX: rotateXFamily, translateY: translateYFamily, opacity: opacityFamily }}
               className={cn(
-                "w-full max-w-md h-[450px] rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.2)]",
+                "w-full max-w-md h-full rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.2)]",
                 "transform-style-preserve-3d transition-shadow duration-500"
               )}
             >
