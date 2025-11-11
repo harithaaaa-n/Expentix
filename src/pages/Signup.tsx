@@ -27,7 +27,7 @@ const Signup = () => {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-md p-8 space-y-6 bg-card rounded-lg shadow-xl border border-border"
+        className="w-[90%] sm:w-[70%] md:w-[50%] lg:w-[33%] max-w-md p-8 space-y-6 bg-card rounded-lg shadow-xl border border-border"
       >
         <h2 className="text-3xl font-bold text-center text-primary">
           Join Expentix
