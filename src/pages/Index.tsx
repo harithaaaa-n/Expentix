@@ -30,9 +30,9 @@ const Index = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 1.5 }}
         >
-          <div className="absolute top-[10%] left-[5%] w-[18vw] h-[18vw] max-w-64 max-h-64 bg-sky-blue/50 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-float animation-delay-2000" />
-          <div className="absolute bottom-[20%] right-[10%] w-[22vw] h-[22vw] max-w-80 max-h-80 bg-lavender-violet/50 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-float animation-delay-4000" />
-          <div className="absolute top-[40%] right-[5%] w-[15vw] h-[15vw] max-w-48 max-h-48 bg-mint-green/50 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-float animation-delay-6000" />
+          <div className="absolute top-[10%] left-[5%] w-[25vw] h-[25vw] max-w-64 max-h-64 bg-sky-blue/50 dark:bg-sky-blue/70 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-float animation-delay-2000" />
+          <div className="absolute bottom-[20%] right-[10%] w-[30vw] h-[30vw] max-w-80 max-h-80 bg-lavender-violet/50 dark:bg-lavender-violet/70 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-float animation-delay-4000" />
+          <div className="absolute top-[40%] right-[5%] w-[20vw] h-[20vw] max-w-48 max-h-48 bg-mint-green/50 dark:bg-mint-green/70 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-float animation-delay-6000" />
         </motion.div>
       </div>
       

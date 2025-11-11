@@ -76,6 +76,10 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      boxShadow: {
+        'glow-blue': '0 0 20px theme(colors.sky-blue / 0.6)',
+        'glow-violet': '0 0 20px theme(colors.lavender-violet / 0.6)',
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },

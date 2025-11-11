@@ -11,7 +11,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   return (
     <div className="relative min-h-screen overflow-x-hidden">
       {/* Background Gradient Container */}
-      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-[#E0F7FA] via-[#E3F2FD] to-[#EDE7F6] dark:from-sky-blue/10 dark:via-deep-slate dark:to-lavender-violet/10" />
+      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-[#E0F7FA] via-[#E3F2FD] to-[#EDE7F6] dark:from-sky-blue/20 dark:via-deep-slate dark:to-lavender-violet/20" />
       
       <div className="flex min-h-screen">
         <Sidebar />
