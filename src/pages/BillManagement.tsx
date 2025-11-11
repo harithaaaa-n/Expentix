@@ -16,6 +16,7 @@ import { format, startOfMonth, subMonths, isPast } from 'date-fns';
 import SummaryCard from '@/components/SummaryCard';
 import { useFinancialSummary } from '@/hooks/use-financial-summary';
 import BillAnalytics from '@/components/BillAnalytics';
+import { Helmet } from 'react-helmet-async';
 
 const formatCurrency = (amount: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
 
@@ -182,6 +183,10 @@ const BillManagement = () => {
 
   return (
     <div className="space-y-6">
+      <Helmet>
+        <title>Bills — Expentix</title>
+        <meta name="description" content="Track and manage all your essential recurring bills and payments." />
+      </Helmet>
       <h1 className="text-3xl font-bold flex items-center">
         <Zap className="mr-3 h-7 w-7 text-blue-500" /> Essential Bills Tracker
       </h1>

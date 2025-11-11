@@ -10,6 +10,7 @@ import CategoryPieChart from '@/components/CategoryPieChart';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { Helmet } from 'react-helmet-async';
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('en-IN', {
@@ -38,6 +39,9 @@ const SharedDashboard: React.FC = () => {
   if (isResolveError) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
+        <Helmet>
+          <title>Invalid Share Link — Expentix</title>
+        </Helmet>
         <Alert variant="destructive" className="max-w-md">
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Invalid Share Link</AlertTitle>
@@ -60,6 +64,9 @@ const SharedDashboard: React.FC = () => {
   if (!ownerUserId) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
+        <Helmet>
+          <title>Access Denied — Expentix</title>
+        </Helmet>
         <Alert variant="destructive" className="max-w-md">
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Access Denied</AlertTitle>
@@ -73,6 +80,10 @@ const SharedDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-muted/40 p-4 md:p-8">
+      <Helmet>
+        <title>Shared Dashboard — Expentix</title>
+        <meta name="description" content="Read-only view of the family's financial summary via a shared link." />
+      </Helmet>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

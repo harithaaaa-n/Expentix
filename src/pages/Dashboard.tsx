@@ -9,6 +9,7 @@ import { Loader2, DollarSign, Wallet, TrendingDown, Target } from "lucide-react"
 import { motion } from "framer-motion";
 import { useFinancialSummary } from "@/hooks/use-financial-summary";
 import { Card, CardContent } from "@/components/ui/card";
+import { Helmet } from "react-helmet-async";
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('en-IN', {
@@ -47,6 +48,11 @@ const Dashboard = () => {
       transition={{ duration: 0.5 }}
       className="space-y-6"
     >
+      <Helmet>
+        <title>Dashboard — Expentix</title>
+        <meta name="description" content="View your financial overview, recent activity, and budget usage." />
+      </Helmet>
+      
       {/* Welcome Banner (Using Card for visual appeal) */}
       <Card className="p-6 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 border-blue-500/30">
         <h1 className="text-3xl font-bold text-primary">

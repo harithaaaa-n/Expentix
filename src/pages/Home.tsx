@@ -2,6 +2,7 @@ import { useSession } from "@/integrations/supabase/session-context";
 import Index from "./Index";
 import { Loader2 } from "lucide-react";
 import { Navigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 const Home = () => {
   const { user, isLoading } = useSession();
@@ -20,7 +21,14 @@ const Home = () => {
   }
 
   // If logged out, show landing page
-  return <Index />;
+  return (
+    <>
+      <Helmet>
+        <title>Expentix — Spend Smarter. Live Better.</title>
+      </Helmet>
+      <Index />
+    </>
+  );
 };
 
 export default Home;

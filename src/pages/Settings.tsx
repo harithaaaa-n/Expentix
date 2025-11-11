@@ -2,10 +2,15 @@ import ProfileForm from "@/components/ProfileForm";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import BudgetManager from "@/components/BudgetManager";
 import AccountManagement from "@/components/AccountManagement";
+import { Helmet } from "react-helmet-async";
 
 const Settings = () => {
   return (
     <div className="space-y-6">
+      <Helmet>
+        <title>Settings — Expentix</title>
+        <meta name="description" content="Manage your profile, budgets, and account settings." />
+      </Helmet>
       <h1 className="text-3xl font-bold">Settings</h1>
       
       {/* Profile Information */}

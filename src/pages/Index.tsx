@@ -8,6 +8,7 @@ import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import CtaSection from "@/components/landing/CtaSection";
 import LandingFooter from "@/components/landing/LandingFooter";
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 
 const Index = () => {
   const { isLoading } = useSession();
@@ -22,6 +23,9 @@ const Index = () => {
 
   return (
     <div className="flex flex-col relative overflow-x-hidden">
+      <Helmet>
+        <title>Expentix — Spend Smarter. Live Better.</title>
+      </Helmet>
       {/* Background Gradient Container */}
       <div className="landing-background">
         {/* Floating Orbs / Blurred Shapes */}

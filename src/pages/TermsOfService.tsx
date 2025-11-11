@@ -19,6 +19,7 @@ import {
   RefreshCw 
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 const Section: React.FC<{ icon: React.ElementType, title: string, children: React.ReactNode, delay: number }> = ({ icon: Icon, title, children, delay }) => (
   <motion.div
@@ -43,6 +44,9 @@ const TermsOfService = () => {
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-x-hidden">
+      <Helmet>
+        <title>Terms of Service — Expentix</title>
+      </Helmet>
       {/* Background Gradient Container */}
       <div className="fixed inset-0 -z-10 bg-gradient-to-br from-[#E0F7FA] via-[#E3F2FD] to-[#EDE7F6] dark:from-deep-slate dark:via-gray-900 dark:to-deep-slate" />
       

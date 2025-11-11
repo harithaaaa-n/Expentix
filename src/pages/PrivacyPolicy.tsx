@@ -4,10 +4,14 @@ import LandingFooter from "@/components/landing/LandingFooter";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Helmet } from 'react-helmet-async';
 
 const PrivacyPolicy = () => {
   return (
     <div className="min-h-screen flex flex-col relative overflow-x-hidden">
+      <Helmet>
+        <title>Privacy Policy — Expentix</title>
+      </Helmet>
       {/* Background Gradient Container */}
       <div className="fixed inset-0 -z-10 bg-gradient-to-tr from-mint-green/30 via-aqua-blue/30 to-lavender-violet/30 dark:from-deep-slate dark:via-gray-900 dark:to-deep-slate" />
       

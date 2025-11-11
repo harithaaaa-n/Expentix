@@ -18,6 +18,7 @@ import MonthlyExpenseChart from "@/components/MonthlyExpenseChart";
 import { BarChart } from "recharts";
 import LeaderboardCard from "@/components/LeaderboardCard"; // Import the new component
 import ActivityFeedCard from "@/components/ActivityFeedCard"; // Import the new component
+import { Helmet } from "react-helmet-async";
 
 // Placeholder for Member Expense Comparison Chart
 const MemberExpenseComparisonChart: React.FC<{ members: FamilyMember[], ownerId: string, ownerName: string }> = ({ members, ownerId, ownerName }) => {
@@ -157,6 +158,10 @@ const FamilyPage = () => {
 
   return (
     <div className="space-y-6">
+      <Helmet>
+        <title>Family Center — Expentix</title>
+        <meta name="description" content="Manage family members, track individual spending, and view combined analytics." />
+      </Helmet>
       {/* Header and Actions */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>

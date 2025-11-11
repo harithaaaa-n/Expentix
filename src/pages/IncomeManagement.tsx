@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Card } from '@/components/ui/card';
 import { format } from 'date-fns';
+import { Helmet } from 'react-helmet-async';
 
 // --- Income Table Component (for Table View) ---
 interface IncomeTableProps {
@@ -216,6 +217,10 @@ const IncomeManagement = () => {
 
   return (
     <div className="space-y-6">
+      <Helmet>
+        <title>Income — Expentix</title>
+        <meta name="description" content="Manage, filter, and track all your recorded income sources." />
+      </Helmet>
       <h1 className="text-3xl font-bold">Income Management</h1>
 
       {/* Controls and Filters */}

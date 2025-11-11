@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Wallet, BarChart3, Lightbulb, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Helmet } from 'react-helmet-async';
 
 const MissionCard: React.FC<{ icon: React.ElementType, title: string, delay: number, color: string }> = ({ icon: Icon, title, delay, color }) => (
   <motion.div
@@ -38,6 +39,10 @@ const About = () => {
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-x-hidden">
+      <Helmet>
+        <title>About Us — Expentix</title>
+        <meta name="description" content="Learn about the mission and vision of Expentix: simplifying personal and family finance." />
+      </Helmet>
       {/* Background Gradient Container */}
       <div className="fixed inset-0 -z-10 bg-gradient-to-tr from-mint-green/30 via-aqua-blue/30 to-lavender-violet/30 dark:from-deep-slate dark:via-gray-900 dark:to-deep-slate" />
       

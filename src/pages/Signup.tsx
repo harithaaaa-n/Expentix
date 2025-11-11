@@ -5,6 +5,7 @@ import { useSession } from '@/integrations/supabase/session-context';
 import { Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Loader2, Wallet } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 
 const Signup = () => {
   const { user, isLoading } = useSession();
@@ -23,6 +24,9 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <Helmet>
+        <title>Sign Up — Expentix</title>
+      </Helmet>
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}

@@ -18,6 +18,7 @@ import { useSession } from '@/integrations/supabase/session-context';
 import { Expense } from '@/types/expense';
 import { Income } from '@/types/income';
 import { format } from 'date-fns';
+import { Helmet } from "react-helmet-async";
 
 // Helper function for standard currency formatting (used outside PDF table body)
 const formatCurrency = (amount: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
@@ -236,6 +237,10 @@ const Reports = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="space-y-6">
+      <Helmet>
+        <title>Reports — Expentix</title>
+        <meta name="description" content="Generate and export detailed financial reports, charts, and smart insights." />
+      </Helmet>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold">Financial Reports</h1>

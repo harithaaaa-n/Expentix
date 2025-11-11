@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Card } from '@/components/ui/card';
 import { format } from 'date-fns';
+import { Helmet } from 'react-helmet-async';
 
 // --- Expense Table Component (for Table View) ---
 interface ExpenseTableProps {
@@ -228,6 +229,10 @@ const ExpenseManagement = () => {
 
   return (
     <div className="space-y-6">
+      <Helmet>
+        <title>Expenses — Expentix</title>
+        <meta name="description" content="Manage, filter, and track all your recorded expenses." />
+      </Helmet>
       <h1 className="text-3xl font-bold">Expense Management</h1>
 
       {/* Controls and Filters */}
