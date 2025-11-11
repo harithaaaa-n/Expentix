@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { showError, showSuccess } from "@/utils/toast";
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/integrations/supabase/session-context';
 import { Expense } from '@/types/expense';
@@ -119,7 +119,7 @@ const Reports = () => {
 
         doc.setFontSize(16);
         doc.text("Summary", 14, 45);
-        (doc as any).autoTable({
+        autoTable(doc, {
             startY: 50,
             head: [['Metric', 'Amount (INR)']],
             body: [
@@ -145,7 +145,7 @@ const Reports = () => {
         doc.addPage();
         doc.setFontSize(16);
         doc.text("All Transactions", 14, 22);
-        (doc as any).autoTable({
+        autoTable(doc, {
             startY: 30,
             head: [['Date', 'Type', 'Title/Source', 'Amount', 'Category']],
             body: tableBody,
@@ -157,7 +157,8 @@ const Reports = () => {
         showSuccess("PDF export successful!");
 
     } catch (error) {
-        // Error handled
+        console.error("PDF Export Error:", error);
+        showError("PDF export failed. Please try again.");
     } finally {
         setIsExporting(false);
     }
