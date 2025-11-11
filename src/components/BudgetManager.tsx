@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, type FieldValues } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Budget, BudgetFormValues, BudgetSchema } from '@/types/settings';
 import { ExpenseCategories } from '@/types/expense';

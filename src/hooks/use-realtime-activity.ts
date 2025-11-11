@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/integrations/supabase/session-context';
 import { useOwnerProfile } from './use-owner-profile';
 import { format, parseISO } from 'date-fns';
-import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
+import { type RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
 interface ActivityItem {
   id: string;

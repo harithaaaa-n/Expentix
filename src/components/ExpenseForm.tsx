@@ -1,5 +1,5 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, type FieldValues } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ExpenseFormValues, ExpenseSchema, ExpenseCategories, PaymentTypes } from '@/types/expense';
 import { Button } from '@/components/ui/button';

@@ -10,10 +10,10 @@ export const useShareResolver = (shareId: string | null) => {
     queryFn: async () => {
       if (!shareId) return null;
 
-      const { data, error } = await supabase.functions.invoke<{ user_id: string }>(EDGE_FUNCTION_NAME, {
+      const { data, error } = await supabase.functions.invoke(EDGE_FUNCTION_NAME, {
         body: JSON.stringify({ share_id: shareId }),
         method: 'POST',
-      });
+      }) as { data: { user_id: string } | null, error: any };
 
       if (error) {
         showError("Failed to resolve share link: " + error.message);
