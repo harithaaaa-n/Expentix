@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
 import { Github, Linkedin, Twitter, Wallet } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { MadeWithDyad } from '../made-with-dyad';
+// import { MadeWithDyad } from '../made-with-dyad'; // Removed import
 
 const FooterLink: React.FC<{ to: string; children: React.ReactNode }> = ({ to, children }) => (
   <Link
@@ -80,7 +80,7 @@ const LandingFooter: React.FC = () => {
             <SocialIcon href="#" icon={Twitter} />
           </div>
         </div>
-        <MadeWithDyad />
+        {/* <MadeWithDyad /> Removed */}
       </div>
     </footer>
   );
