@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { useFinancialSummary } from "@/hooks/use-financial-summary";
 import { Loader2, FileText, FileJson, TrendingUp, TrendingDown, Pizza, PiggyBank } from "lucide-react";
 import { motion } from "framer-motion";
@@ -10,7 +11,14 @@ import CategoryPieChart from "@/components/CategoryPieChart";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { showError, showSuccess } from "@/utils/toast";
-import React from "react";
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import { supabase } from '@/integrations/supabase/client';
+import { useSession } from '@/integrations/supabase/session-context';
+import { Expense } from '@/types/expense';
+import { Income } from '@/types/income';
+
+const formatCurrency = (amount: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
 
 const Reports = () => {
   const { 
@@ -22,9 +30,137 @@ const Reports = () => {
     categoryExpenses,
     isLoading: isFinancialLoading 
   } = useFinancialSummary();
+  
+  const { user } = useSession();
+  const [isExporting, setIsExporting] = useState(false);
 
-  const handleExport = (format: 'pdf' | 'csv') => {
-    showSuccess(`Exporting data as ${format.toUpperCase()}... (Feature coming soon!)`);
+  const fetchAllTransactions = async () => {
+    if (!user) return { expenses: [], income: [] };
+    const [expenseRes, incomeRes] = await Promise.all([
+        supabase.from('expenses').select('*').eq('user_id', user.id),
+        supabase.from('income').select('*').eq('user_id', user.id)
+    ]);
+    if (expenseRes.error || incomeRes.error) {
+        showError("Failed to fetch data for export.");
+        throw new Error("Failed to fetch data");
+    }
+    return {
+        expenses: expenseRes.data as Expense[],
+        income: incomeRes.data as Income[]
+    };
+  };
+
+  const handleExportCsv = async () => {
+    setIsExporting(true);
+    try {
+        const { expenses, income } = await fetchAllTransactions();
+        
+        const headers = ['Date', 'Type', 'Title/Source', 'Amount (INR)', 'Category', 'Description'];
+        
+        const expenseRows = expenses.map(e => [
+            e.expense_date,
+            'Expense',
+            e.title,
+            -e.amount,
+            e.category,
+            e.description || ''
+        ]);
+
+        const incomeRows = income.map(i => [
+            i.date,
+            'Income',
+            i.source,
+            i.amount,
+            i.source, // Category for income can be the source itself
+            i.description || ''
+        ]);
+
+        const allRows = [...expenseRows, ...incomeRows]
+            .sort((a, b) => new Date(b[0] as string).getTime() - new Date(a[0] as string).getTime());
+
+        const csvContent = [
+            headers.join(','),
+            ...allRows.map(row => row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(','))
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", `Expentix_Report_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showSuccess("CSV export successful!");
+
+    } catch (error) {
+        // Error is already shown in fetch function
+    } finally {
+        setIsExporting(false);
+    }
+  };
+
+  const handleExportPdf = async () => {
+    setIsExporting(true);
+    try {
+        const { expenses, income } = await fetchAllTransactions();
+        const doc = new jsPDF();
+
+        // Title
+        doc.setFontSize(22);
+        doc.text("Expentix Financial Report", 14, 22);
+        doc.setFontSize(12);
+        doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 30);
+
+        // Summary
+        const totalIncomeVal = income.reduce((sum, i) => sum + i.amount, 0);
+        const totalExpensesVal = expenses.reduce((sum, e) => sum + e.amount, 0);
+        const balance = totalIncomeVal - totalExpensesVal;
+
+        doc.setFontSize(16);
+        doc.text("Summary", 14, 45);
+        (doc as any).autoTable({
+            startY: 50,
+            head: [['Metric', 'Amount (INR)']],
+            body: [
+                ['Total Income', formatCurrency(totalIncomeVal)],
+                ['Total Expenses', formatCurrency(totalExpensesVal)],
+                ['Remaining Balance', formatCurrency(balance)],
+            ],
+            theme: 'grid',
+            headStyles: { fillColor: [58, 134, 255] } // sky-blue
+        });
+
+        // Transactions Table
+        const tableBody = [...expenses, ...income]
+            .sort((a, b) => new Date((b as Expense).expense_date || (b as Income).date).getTime() - new Date((a as Expense).expense_date || (a as Income).date).getTime())
+            .map(item => {
+                if ('expense_date' in item) { // It's an Expense
+                    return [item.expense_date, 'Expense', item.title, formatCurrency(-item.amount), item.category];
+                } else { // It's an Income
+                    return [item.date, 'Income', item.source, formatCurrency(item.amount), 'N/A'];
+                }
+            });
+
+        doc.addPage();
+        doc.setFontSize(16);
+        doc.text("All Transactions", 14, 22);
+        (doc as any).autoTable({
+            startY: 30,
+            head: [['Date', 'Type', 'Title/Source', 'Amount', 'Category']],
+            body: tableBody,
+            theme: 'striped',
+            headStyles: { fillColor: [58, 134, 255] }
+        });
+
+        doc.save(`Expentix_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+        showSuccess("PDF export successful!");
+
+    } catch (error) {
+        // Error handled
+    } finally {
+        setIsExporting(false);
+    }
   };
 
   const generateInsights = React.useCallback(() => {
@@ -106,11 +242,13 @@ const Reports = () => {
           <p className="text-muted-foreground">Your detailed financial summary and insights.</p>
         </div>
         <div className="flex space-x-2 self-start md:self-center">
-          <Button variant="outline" onClick={() => handleExport('csv')}>
-            <FileJson className="h-4 w-4 mr-2" /> Export CSV
+          <Button variant="outline" onClick={handleExportCsv} disabled={isExporting}>
+            {isExporting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <FileJson className="h-4 w-4 mr-2" />}
+            Export CSV
           </Button>
-          <Button onClick={() => handleExport('pdf')}>
-            <FileText className="h-4 w-4 mr-2" /> Export PDF
+          <Button onClick={handleExportPdf} disabled={isExporting}>
+            {isExporting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <FileText className="h-4 w-4 mr-2" />}
+            Export PDF
           </Button>
         </div>
       </div>
