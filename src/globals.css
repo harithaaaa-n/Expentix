@@ -121,7 +121,7 @@
 
 @layer components {
   .landing-background {
-    @apply fixed inset-0 -z-10 bg-gradient-to-tr from-mint-green/30 via-aqua-blue/30 to-lavender-violet/30 dark:from-deep-slate dark:via-gray-900 dark:to-deep-slate;
+    @apply fixed inset-0 -z-10 bg-gradient-to-tr from-mint-green/30 via-aqua-blue/30 to-lavender-violet/30 dark:from-sky-blue/20 dark:via-deep-slate dark:to-lavender-violet/20;
   }
 
   @media (orientation: portrait) {
