@@ -52,35 +52,37 @@ const RecentActivityTable: React.FC<RecentActivityTableProps> = ({ expenses }) =
               No recent expenses found.
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[150px]">Category</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {expenses.map((expense, index) => (
-                  <TableRow key={expense.id} className="hover:bg-muted/50 transition-colors">
-                    <TableCell className="font-medium flex items-center space-x-2">
-                      <Tag className="h-4 w-4 text-primary" />
-                      <span>{expense.category}</span>
-                    </TableCell>
-                    <TableCell className="text-sm truncate max-w-xs">
-                      {expense.title}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {format(new Date(expense.expense_date), 'MMM dd')}
-                    </TableCell>
-                    <TableCell className="text-right font-semibold text-destructive">
-                      {formatCurrency(expense.amount)}
-                    </TableCell>
+            <div className="overflow-x-auto"> {/* Added overflow wrapper */}
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[150px]">Category</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {expenses.map((expense, index) => (
+                    <TableRow key={expense.id} className="hover:bg-muted/50 transition-colors">
+                      <TableCell className="font-medium flex items-center space-x-2">
+                        <Tag className="h-4 w-4 text-primary" />
+                        <span>{expense.category}</span>
+                      </TableCell>
+                      <TableCell className="text-sm truncate max-w-xs">
+                        {expense.title}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {format(new Date(expense.expense_date), 'MMM dd')}
+                      </TableCell>
+                      <TableCell className="text-right font-semibold text-destructive">
+                        {formatCurrency(expense.amount)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>
