@@ -5,6 +5,9 @@ import { cn } from "@/lib/utils";
 
 interface ColoredProgressProps extends React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> {
   indicatorClassName?: string;
+  // Explicitly adding props that should be inherited but are failing:
+  className?: string;
+  value?: number;
 }
 
 const ColoredProgress = React.forwardRef<
