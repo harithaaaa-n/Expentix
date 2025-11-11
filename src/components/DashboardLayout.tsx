@@ -1,7 +1,7 @@
 import React from "react";
 import { Sidebar } from "./Sidebar";
 import Header from "./Header";
-import { motion } from "framer-motion";
+import BottomNav from "./BottomNav";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -17,10 +17,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <Sidebar />
         <div className="flex flex-col w-full md:ml-64">
           <Header />
-          <main className="flex-1 p-4 sm:p-6 lg:p-8">
+          <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-20 md:pb-8">
             {children}
           </main>
         </div>
+        <BottomNav />
       </div>
     </div>
   );

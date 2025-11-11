@@ -27,19 +27,18 @@ const Signup = () => {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
-        className="w-[90%] sm:w-[70%] md:w-[50%] lg:w-[33%] max-w-md p-8 space-y-6 bg-card rounded-lg shadow-xl border border-border"
+        className="w-[90%] sm:w-[60%] md:w-[50%] lg:w-[30%] max-w-md p-6 md:p-8 space-y-6 bg-card rounded-lg shadow-xl border border-border"
       >
         <h2 className="text-3xl font-bold text-center text-primary">
           Join Expentix
         </h2>
         
-        {/* Animated Mascot Placeholder */}
         <div className="flex justify-center mb-6">
           <motion.div
             animate={{ rotate: [0, 10, -10, 0] }}
             transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
           >
-            <Wallet className="h-12 w-12 text-blue-500" />
+            <Wallet className="h-12 w-12 sm:h-16 sm:w-16 text-blue-500" />
           </motion.div>
         </div>
 

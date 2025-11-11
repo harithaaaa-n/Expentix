@@ -21,7 +21,8 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: delay }}
+      whileHover={{ y: -5, scale: 1.03 }}
+      transition={{ duration: 0.5, delay: delay, type: "spring", stiffness: 150 }}
       className="relative group" // Main container for hover effect
     >
       {/* Glow element */}
@@ -31,7 +32,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
         )}
       />
       {/* Card content */}
-      <Card className="relative bg-card/60 backdrop-blur-md border-border/50 shadow-sm group-hover:shadow-lg transition-shadow">
+      <Card className="relative bg-card/60 backdrop-blur-md border-border/50 shadow-md lg:shadow-lg group-hover:shadow-xl transition-shadow">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">{title}</CardTitle>
           <Icon className={cn("h-4 w-4", colorClass)} />

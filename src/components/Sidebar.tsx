@@ -1,9 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, DollarSign, TrendingUp, BarChart3, Users, Settings, Menu, Zap, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
@@ -50,23 +47,6 @@ const SidebarContent = () => {
 };
 
 export const Sidebar = () => {
-  const isMobile = useIsMobile();
-
-  if (isMobile) {
-    return (
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" className="md:hidden fixed top-3 left-3 z-40 bg-background/50 backdrop-blur-sm">
-            <Menu className="h-6 w-6" />
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="p-0 w-64 flex flex-col bg-sidebar/80 backdrop-blur-xl border-r-sidebar-border">
-          <SidebarContent />
-        </SheetContent>
-      </Sheet>
-    );
-  }
-
   return (
     <div className="hidden md:flex flex-col h-screen w-64 border-r border-sidebar-border/50 bg-sidebar/60 backdrop-blur-lg fixed top-0 left-0">
       <SidebarContent />
