@@ -94,6 +94,10 @@
     @apply bg-background text-foreground;
   }
   
+  html {
+    scroll-behavior: smooth;
+  }
+  
   /* Smooth transitions for theme change */
   @media (prefers-reduced-motion: no-preference) {
     html {
@@ -111,6 +115,18 @@
         color 0.3s ease, 
         border-color 0.3s ease, 
         box-shadow 0.3s ease;
+    }
+  }
+}
+
+@layer components {
+  .landing-background {
+    @apply fixed inset-0 -z-10 bg-gradient-to-tr from-mint-green/30 via-aqua-blue/30 to-lavender-violet/30 dark:from-deep-slate dark:via-gray-900 dark:to-deep-slate;
+  }
+
+  @media (orientation: portrait) {
+    .landing-background {
+      @apply bg-gradient-to-b;
     }
   }
 }
