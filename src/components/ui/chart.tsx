@@ -146,7 +146,7 @@ const ChartTooltipContent = React.forwardRef<
               "rounded-lg border border-border bg-background p-2 shadow-md",
               className
             )}
-            {...props}
+            // Removed {...props} spread here to fix TS2322
           >
             {!hideLabel && label ? (
               <div className="text-sm font-medium">
@@ -201,7 +201,7 @@ const ChartTooltipContent = React.forwardRef<
                     </div>
                     <span className="font-medium text-foreground">
                       {formatter && item.value !== undefined
-                        ? formatter(item.value, item.name, item, index, payload) // Added missing 5th argument (payload)
+                        ? formatter(item.value, item.name, item, index, payload)
                         : item.value}
                     </span>
                   </div>
@@ -226,7 +226,7 @@ const ChartTooltipContent = React.forwardRef<
 
     return (
       <ChartTooltip
-        content={content || customContent} // Use customContent if content is not provided
+        content={content || customContent}
         viewBox={viewBox}
         label={label}
         payload={payload}

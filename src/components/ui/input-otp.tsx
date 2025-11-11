@@ -11,6 +11,7 @@ interface OTPInputContextValue extends RenderProps {
     char: string;
     hasFakeCaret: boolean;
     isActive: boolean;
+    placeholderChar: string; // Added missing required property
   }[];
 }
 
