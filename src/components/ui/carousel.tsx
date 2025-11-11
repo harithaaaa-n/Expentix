@@ -1,7 +1,6 @@
 import * as React from "react";
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
-  type EmblaOptionsType,
 } from "embla-carousel-react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
@@ -10,7 +9,7 @@ import { Button } from "@/components/ui/button";
 
 type CarouselApi = UseEmblaCarouselType[1];
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>;
-type CarouselOptions = EmblaOptionsType; // Use EmblaOptionsType directly
+type CarouselOptions = UseCarouselParameters[0]; // Derive options type from the first parameter of useEmblaCarousel
 type CarouselProps = {
   opts?: CarouselOptions;
   orientation?: "horizontal" | "vertical";
