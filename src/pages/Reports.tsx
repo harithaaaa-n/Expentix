@@ -19,7 +19,15 @@ import { Expense } from '@/types/expense';
 import { Income } from '@/types/income';
 import { format } from 'date-fns';
 
+// Helper function for standard currency formatting (used outside PDF table body)
 const formatCurrency = (amount: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
+
+// Helper function for simple numeric formatting (used inside PDF table body)
+const formatSimpleNumber = (amount: number) => new Intl.NumberFormat('en-IN', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+}).format(amount);
+
 
 const Reports = () => {
   const { 
@@ -138,22 +146,35 @@ const Reports = () => {
             .sort((a, b) => new Date((b as Expense).expense_date || (b as Income).date).getTime() - new Date((a as Expense).expense_date || (a as Income).date).getTime())
             .map(item => {
                 if ('expense_date' in item) { // It's an Expense
-                    return [format(new Date(item.expense_date), 'dd MMM, yy'), 'Expense', item.title, formatCurrency(-item.amount), item.category];
+                    return [
+                        format(new Date(item.expense_date), 'dd MMM, yy'), 
+                        'Expense', 
+                        item.title, 
+                        `-${formatSimpleNumber(item.amount)}`, // Use simple number format
+                        item.category
+                    ];
                 } else { // It's an Income
-                    return [format(new Date(item.date), 'dd MMM, yy'), 'Income', item.source, formatCurrency(item.amount), 'N/A'];
+                    return [
+                        format(new Date(item.date), 'dd MMM, yy'), 
+                        'Income', 
+                        item.source, 
+                        formatSimpleNumber(item.amount), // Use simple number format
+                        'N/A'
+                    ];
                 }
             });
 
         autoTable(doc, {
             startY: (doc as any).lastAutoTable.finalY + 15,
-            head: [['Date', 'Type', 'Title/Source', 'Amount', 'Category']],
+            head: [['Date', 'Type', 'Title/Source', 'Amount (INR)', 'Category']],
             body: tableBody,
             theme: 'striped',
             headStyles: { fillColor: [58, 134, 255] },
             didDrawCell: (data) => {
                 if (data.column.index === 3 && data.cell.section === 'body') {
                     const text = data.cell.text[0];
-                    if (text.includes('-')) {
+                    // Check if the text starts with '-' to determine if it's an expense
+                    if (text.startsWith('-')) {
                         doc.setTextColor(220, 38, 38); // Red for expenses
                     } else {
                         doc.setTextColor(22, 163, 74); // Green for income
