@@ -79,6 +79,7 @@ export default {
       boxShadow: {
         'glow-blue': '0 0 20px theme(colors.sky-blue / 0.6)',
         'glow-violet': '0 0 20px theme(colors.lavender-violet / 0.6)',
+        'glow-edge': '0 4px 20px 0 var(--glow-color)', // New glow effect
       },
       keyframes: {
         "accordion-down": {
